@@ -1,0 +1,4 @@
+a = box(1,2,3)
+b = box(2,1,1)
+
+difference(a,b)

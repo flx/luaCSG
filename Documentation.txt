@@ -1,0 +1,66 @@
+luaCSG is a very simple document-based Cocoa application. The DHDocument class contains the following
+functionality:
+
+Read and write data to the document file - this saves the scipt saved in NSString *content;
+
+- (NSData *)dataOfType:(NSString *)typeName error:(NSError **)outError
+- (BOOL)readFromData:(NSData *)data ofType:(NSString *)typeName error:(NSError **)outError
+
+Add a primitive shape to the SceneKit scene - this will be called from the lua script:
+
+- (void)addPrimitive:(DHPrimitive*) p
+
+Run the lua script:
+
+- (IBAction)run:(id)sender
+
+The implementation file also contains a number of static C functions that are registered with lua. I
+thought about integrating with luaCocoa bridges to avoid creating those, but realised that there is
+little more needed than a handful of functions - bridge functionality is a bit heavyweight for that.
+
+create primitives that will be inserted into the SceneKit scene - the are registered as light userdata
+"DHPrimitive":
+
+static int create_box (lua_State *L)
+static int create_cone (lua_State *L)
+static int create_tube(lua_State *L)
+static int create_sphere(lua_State *L)
+static int create_cylinder(lua_State *L)
+
+Move and rotate primitves:
+
+static int move(lua_State *L)   -- parameters is the (x,y,z) translation vector as three numbers
+static int rotate(lua_State *L) -- parameters is the rotation axis through a vector (x,y,z) and the
+                                   rotation in radians
+
+Boolean operations:
+
+static int difference(lua_State *L)
+static int intersection(lua_State *L)
+static int do_union(lua_State *L)
+
+The main work getting triangles into and out of SceneKit is done in the DHPrimitive class:
+
+luaCSG/DHPrimitive.h
+
+Most standard SceneKit primitives are used to create the usual solids:
+
+luaCSG/DHBox.h
+luaCSG/DHCapsule.h
+luaCSG/DHCone.h
+luaCSG/DHCylinder.h
+luaCSG/DHSphere.h
+luaCSG/DHTorus.h
+luaCSG/DHTube.h
+
+SceneKit primitives come with parameters to control geometry and mesh. In my experience, the triangles
+that I was able to extract from the primitives always were those of the default mesh and geometry 
+parameters. This is why I transform the coordinates in the method 
+
+-(SCNVector3) transformVector:(SCNVector3) vector
+
+This one is overridden by each primitive to transform the default geometry into the actual geometry
+(e.g. the default sphere has a radius of 1 - transformVector will change that to the real radius).
+This obviously leaves the mesh untouched and will need to be fixed later.
+
+Example script files are in the examples subfolder.

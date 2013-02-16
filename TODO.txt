@@ -1,0 +1,6 @@
+2013-02-16: 
+- CRITICAL: gts fails on asserts in some boolean operations
+- Implementation of boolean operations through hierarchies is flawed for multi-layered boolean operations
+- Create menu action and lua command to export to stl
+- Implement native primitives to get around SceneKit-based mesh generation (or find the real
+  mesh in SceneKit primitives)

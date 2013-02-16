@@ -1,0 +1,6 @@
+
+for rot=0,3.1415,0.1 do
+	b = sphere(1)
+	move(b,15,0,0)
+	rotate(b,0,0,1,rot)
+end
