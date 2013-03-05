@@ -1,12 +1,12 @@
-luaCSG is an very early stage scriptable Constructive Solid Geometry (CSG) application.
+luaCSG is a very early stage scriptable Constructive Solid Geometry (CSG) application.
 The idea for luaCSG came from looking at the excellent SceneKit implementation in 
 Cocoa while simultaneously using OpenSCAD (http://www.openscad.org).
 
-OpenSCAD uses a custom scripting language to create solids - which exhibits effects
-that I have seen in other ad-hoc scripting languages that evolved out of a data
+OpenSCAD uses a custom scripting language to create solids - which exhibits undesirable
+effects that I have seen in other ad-hoc scripting languages that evolved out of a data
 representation languages.
 
-I wanted to have a scriptable CSG application that would use lua - as it is powerful
+I wanted to have a scriptable CSG application that uses lua - as lua is powerful
 and already debugged. 
 
 Connecting lua and OSX is banal, SceneKit does not require a lot of work out of the
@@ -15,3 +15,5 @@ fell on the GNU triangulated surface library gts (http://gts.sourceforge.net).
 
 Unfortunately gts has bugs and can be unstable with boolean operations - so there are
 significant fixes needed in luaCGS / gts to make it remotely usable.
+
+I am currently deliberating abandoning gts and switching to CGAL.
