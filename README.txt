@@ -16,4 +16,4 @@ fell on the GNU triangulated surface library gts (http://gts.sourceforge.net).
 Unfortunately gts has bugs and can be unstable with boolean operations - so there are
 significant fixes needed in luaCGS / gts to make it remotely usable.
 
-I am currently deliberating abandoning gts and switching to CGAL.
+I am currently deliberating abandoning gts and switching to CGAL (http://www.cgal.org).
