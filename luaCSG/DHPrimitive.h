@@ -20,9 +20,16 @@
 //  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Polyhedron_3.h>
 #import <Foundation/Foundation.h>
-#import <gts.h>
 #import <SceneKit/SceneKit.h>
+
+
+typedef CGAL::Simple_cartesian<double>     Kernel;
+typedef Kernel::Point_3                    Point_3;
+typedef CGAL::Polyhedron_3<Kernel>         Polyhedron;
+typedef Polyhedron::Vertex_iterator        Vertex_iterator;
 
 enum {
     DHUnion = 1,        // Union of self and all childnodes
@@ -32,11 +39,10 @@ enum {
 
 @interface DHPrimitive : SCNNode {
     BOOL         _dirty;
-    GtsSurface*  _surface;
-    GtsFace*     _face; // necessary to destroy _surface (for the traverse)
+    Polyhedron   _surface;
 }
 
--(GtsSurface *) surface;
+-(Polyhedron) surface;
 -(void) generate;
 -(void) generateSurface;
 -(void) generateGeometry;
@@ -47,7 +53,7 @@ enum {
 
 @property (readwrite, nonatomic) SCNGeometry* generatedGeometry;
 @property (readwrite, nonatomic) SCNMaterial* generatedMaterial;
-@property (readwrite, nonatomic) gdouble      delta;
+@property (readwrite, nonatomic) double      delta;
 @property (readwrite, nonatomic) uint         type; // e.g. DHUnion
 
 @end

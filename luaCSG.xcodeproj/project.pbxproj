@@ -8,49 +8,48 @@
 
 /* Begin PBXBuildFile section */
 		DC0FE145168E21F3003B9CEF /* liblua.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DC0FE144168E21F3003B9CEF /* liblua.dylib */; };
-		DC0FE14A168F1FE7003B9CEF /* DHPrimitive.m in Sources */ = {isa = PBXBuildFile; fileRef = DC0FE149168F1FE7003B9CEF /* DHPrimitive.m */; };
-		DC0FE14C168F4602003B9CEF /* libglib-2.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DC0FE14B168F4602003B9CEF /* libglib-2.0.0.dylib */; };
-		DC17314F16BADC6900331CD0 /* libgts.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DC17314E16BADC6900331CD0 /* libgts.dylib */; };
-		DC60881116BE5DE800239A8E /* LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = DC60881016BE5DE800239A8E /* LICENSE.txt */; };
-		DC821DA21692FF5100186726 /* DHBox.m in Sources */ = {isa = PBXBuildFile; fileRef = DC821DA11692FF5100186726 /* DHBox.m */; };
-		DC821DA61692FF6600186726 /* DHCone.m in Sources */ = {isa = PBXBuildFile; fileRef = DC821DA51692FF6600186726 /* DHCone.m */; };
-		DC821DA91692FF7500186726 /* DHTube.m in Sources */ = {isa = PBXBuildFile; fileRef = DC821DA81692FF7500186726 /* DHTube.m */; };
-		DC821DAC1692FF8400186726 /* DHTorus.m in Sources */ = {isa = PBXBuildFile; fileRef = DC821DAB1692FF8400186726 /* DHTorus.m */; };
-		DC821DAF1692FF9300186726 /* DHSphere.m in Sources */ = {isa = PBXBuildFile; fileRef = DC821DAE1692FF9300186726 /* DHSphere.m */; };
-		DC821DB21692FF9F00186726 /* DHCapsule.m in Sources */ = {isa = PBXBuildFile; fileRef = DC821DB11692FF9F00186726 /* DHCapsule.m */; };
-		DC821DB51692FFAC00186726 /* DHCylinder.m in Sources */ = {isa = PBXBuildFile; fileRef = DC821DB41692FFAC00186726 /* DHCylinder.m */; };
+		DC0FE14A168F1FE7003B9CEF /* DHPrimitive.mm in Sources */ = {isa = PBXBuildFile; fileRef = DC0FE149168F1FE7003B9CEF /* DHPrimitive.mm */; };
+		DC91A44416EDE186001BB7FB /* libgmp.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DC91A44316EDE186001BB7FB /* libgmp.dylib */; };
+		DC91A44616EDE19B001BB7FB /* libmpfr.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DC91A44516EDE19B001BB7FB /* libmpfr.dylib */; };
+		DC91A45C16EE1828001BB7FB /* DHBox.mm in Sources */ = {isa = PBXBuildFile; fileRef = DC821DA11692FF5100186726 /* DHBox.mm */; };
+		DC91A45D16EE182B001BB7FB /* DHCone.mm in Sources */ = {isa = PBXBuildFile; fileRef = DC821DA51692FF6600186726 /* DHCone.mm */; };
+		DC91A45E16EE182E001BB7FB /* DHTube.mm in Sources */ = {isa = PBXBuildFile; fileRef = DC821DA81692FF7500186726 /* DHTube.mm */; };
+		DC91A45F16EE1831001BB7FB /* DHTorus.mm in Sources */ = {isa = PBXBuildFile; fileRef = DC821DAB1692FF8400186726 /* DHTorus.mm */; };
+		DC91A46016EE1834001BB7FB /* DHSphere.mm in Sources */ = {isa = PBXBuildFile; fileRef = DC821DAE1692FF9300186726 /* DHSphere.mm */; };
+		DC91A46116EE1837001BB7FB /* DHCapsule.mm in Sources */ = {isa = PBXBuildFile; fileRef = DC821DB11692FF9F00186726 /* DHCapsule.mm */; };
+		DC91A46216EE183A001BB7FB /* DHCylinder.mm in Sources */ = {isa = PBXBuildFile; fileRef = DC821DB41692FFAC00186726 /* DHCylinder.mm */; };
 		DC980D98168623D5004716D2 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC980D97168623D5004716D2 /* Cocoa.framework */; };
 		DC980DA2168623D5004716D2 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = DC980DA0168623D5004716D2 /* InfoPlist.strings */; };
 		DC980DA4168623D5004716D2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = DC980DA3168623D5004716D2 /* main.m */; };
-		DC980DAB168623D5004716D2 /* DHDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = DC980DAA168623D5004716D2 /* DHDocument.m */; };
+		DC980DAB168623D5004716D2 /* DHDocument.mm in Sources */ = {isa = PBXBuildFile; fileRef = DC980DAA168623D5004716D2 /* DHDocument.mm */; };
 		DC980DAE168623D5004716D2 /* DHDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = DC980DAC168623D5004716D2 /* DHDocument.xib */; };
 		DC980DB1168623D5004716D2 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = DC980DAF168623D5004716D2 /* MainMenu.xib */; };
 		DC980DC016862585004716D2 /* SceneKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC980DBF16862585004716D2 /* SceneKit.framework */; };
-		DC980DD316862E7A004716D2 /* DHSCView.m in Sources */ = {isa = PBXBuildFile; fileRef = DC980DD216862E7A004716D2 /* DHSCView.m */; };
+		DC980DD316862E7A004716D2 /* DHSCView.mm in Sources */ = {isa = PBXBuildFile; fileRef = DC980DD216862E7A004716D2 /* DHSCView.mm */; };
 		DC980DD516862EC9004716D2 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC980DD416862EC9004716D2 /* QuartzCore.framework */; };
+		DCB3C2F916E5B988006AEA95 /* libCGAL.9.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DCB3C2F816E5B988006AEA95 /* libCGAL.9.0.0.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		DC0FE144168E21F3003B9CEF /* liblua.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblua.dylib; path = ../../../../../usr/local/lib/liblua.dylib; sourceTree = "<group>"; };
-		DC0FE148168F1FE7003B9CEF /* DHPrimitive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DHPrimitive.h; sourceTree = "<group>"; };
-		DC0FE149168F1FE7003B9CEF /* DHPrimitive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DHPrimitive.m; sourceTree = "<group>"; };
-		DC0FE14B168F4602003B9CEF /* libglib-2.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libglib-2.0.0.dylib"; path = "../../../../../usr/local/Cellar/glib/2.34.3/lib/libglib-2.0.0.dylib"; sourceTree = "<group>"; };
-		DC17314E16BADC6900331CD0 /* libgts.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgts.dylib; path = ../../../../../usr/local/lib/libgts.dylib; sourceTree = "<group>"; };
-		DC60881016BE5DE800239A8E /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
+		DC0FE148168F1FE7003B9CEF /* DHPrimitive.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = DHPrimitive.h; sourceTree = "<group>"; };
+		DC0FE149168F1FE7003B9CEF /* DHPrimitive.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = DHPrimitive.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		DC821DA01692FF5100186726 /* DHBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DHBox.h; sourceTree = "<group>"; };
-		DC821DA11692FF5100186726 /* DHBox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DHBox.m; sourceTree = "<group>"; };
+		DC821DA11692FF5100186726 /* DHBox.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DHBox.mm; sourceTree = "<group>"; };
 		DC821DA41692FF6600186726 /* DHCone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DHCone.h; sourceTree = "<group>"; };
-		DC821DA51692FF6600186726 /* DHCone.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DHCone.m; sourceTree = "<group>"; };
+		DC821DA51692FF6600186726 /* DHCone.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DHCone.mm; sourceTree = "<group>"; };
 		DC821DA71692FF7500186726 /* DHTube.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DHTube.h; sourceTree = "<group>"; };
-		DC821DA81692FF7500186726 /* DHTube.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DHTube.m; sourceTree = "<group>"; };
+		DC821DA81692FF7500186726 /* DHTube.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DHTube.mm; sourceTree = "<group>"; };
 		DC821DAA1692FF8400186726 /* DHTorus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DHTorus.h; sourceTree = "<group>"; };
-		DC821DAB1692FF8400186726 /* DHTorus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DHTorus.m; sourceTree = "<group>"; };
+		DC821DAB1692FF8400186726 /* DHTorus.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DHTorus.mm; sourceTree = "<group>"; };
 		DC821DAD1692FF9300186726 /* DHSphere.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DHSphere.h; sourceTree = "<group>"; };
-		DC821DAE1692FF9300186726 /* DHSphere.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DHSphere.m; sourceTree = "<group>"; };
+		DC821DAE1692FF9300186726 /* DHSphere.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DHSphere.mm; sourceTree = "<group>"; };
 		DC821DB01692FF9F00186726 /* DHCapsule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DHCapsule.h; sourceTree = "<group>"; };
-		DC821DB11692FF9F00186726 /* DHCapsule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DHCapsule.m; sourceTree = "<group>"; };
+		DC821DB11692FF9F00186726 /* DHCapsule.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DHCapsule.mm; sourceTree = "<group>"; };
 		DC821DB31692FFAC00186726 /* DHCylinder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DHCylinder.h; sourceTree = "<group>"; };
-		DC821DB41692FFAC00186726 /* DHCylinder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DHCylinder.m; sourceTree = "<group>"; };
+		DC821DB41692FFAC00186726 /* DHCylinder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DHCylinder.mm; sourceTree = "<group>"; };
+		DC91A44316EDE186001BB7FB /* libgmp.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgmp.dylib; path = ../../../../../usr/local/lib/libgmp.dylib; sourceTree = "<group>"; };
+		DC91A44516EDE19B001BB7FB /* libmpfr.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libmpfr.dylib; path = ../../../../../usr/local/lib/libmpfr.dylib; sourceTree = "<group>"; };
 		DC980D93168623D5004716D2 /* luaCSG.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = luaCSG.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DC980D97168623D5004716D2 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		DC980D9A168623D5004716D2 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -61,13 +60,14 @@
 		DC980DA3168623D5004716D2 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		DC980DA5168623D5004716D2 /* luaCSG-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "luaCSG-Prefix.pch"; sourceTree = "<group>"; };
 		DC980DA9168623D5004716D2 /* DHDocument.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DHDocument.h; sourceTree = "<group>"; };
-		DC980DAA168623D5004716D2 /* DHDocument.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DHDocument.m; sourceTree = "<group>"; };
+		DC980DAA168623D5004716D2 /* DHDocument.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DHDocument.mm; sourceTree = "<group>"; };
 		DC980DAD168623D5004716D2 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/DHDocument.xib; sourceTree = "<group>"; };
 		DC980DB0168623D5004716D2 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		DC980DBF16862585004716D2 /* SceneKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SceneKit.framework; path = System/Library/Frameworks/SceneKit.framework; sourceTree = SDKROOT; };
 		DC980DD116862E7A004716D2 /* DHSCView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DHSCView.h; sourceTree = "<group>"; };
-		DC980DD216862E7A004716D2 /* DHSCView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DHSCView.m; sourceTree = "<group>"; };
+		DC980DD216862E7A004716D2 /* DHSCView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DHSCView.mm; sourceTree = "<group>"; };
 		DC980DD416862EC9004716D2 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		DCB3C2F816E5B988006AEA95 /* libCGAL.9.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libCGAL.9.0.0.dylib; path = ../../../../../usr/local/Cellar/cgal/4.1/lib/libCGAL.9.0.0.dylib; sourceTree = "<group>"; };
 		DCF5885C1693535200D85EF6 /* Primitives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Primitives.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -80,8 +80,9 @@
 				DC980DC016862585004716D2 /* SceneKit.framework in Frameworks */,
 				DC980D98168623D5004716D2 /* Cocoa.framework in Frameworks */,
 				DC0FE145168E21F3003B9CEF /* liblua.dylib in Frameworks */,
-				DC0FE14C168F4602003B9CEF /* libglib-2.0.0.dylib in Frameworks */,
-				DC17314F16BADC6900331CD0 /* libgts.dylib in Frameworks */,
+				DCB3C2F916E5B988006AEA95 /* libCGAL.9.0.0.dylib in Frameworks */,
+				DC91A44416EDE186001BB7FB /* libgmp.dylib in Frameworks */,
+				DC91A44616EDE19B001BB7FB /* libmpfr.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -93,21 +94,21 @@
 			children = (
 				DCF5885C1693535200D85EF6 /* Primitives.h */,
 				DC0FE148168F1FE7003B9CEF /* DHPrimitive.h */,
-				DC0FE149168F1FE7003B9CEF /* DHPrimitive.m */,
+				DC0FE149168F1FE7003B9CEF /* DHPrimitive.mm */,
 				DC821DA01692FF5100186726 /* DHBox.h */,
-				DC821DA11692FF5100186726 /* DHBox.m */,
+				DC821DA11692FF5100186726 /* DHBox.mm */,
 				DC821DA41692FF6600186726 /* DHCone.h */,
-				DC821DA51692FF6600186726 /* DHCone.m */,
+				DC821DA51692FF6600186726 /* DHCone.mm */,
 				DC821DA71692FF7500186726 /* DHTube.h */,
-				DC821DA81692FF7500186726 /* DHTube.m */,
+				DC821DA81692FF7500186726 /* DHTube.mm */,
 				DC821DAA1692FF8400186726 /* DHTorus.h */,
-				DC821DAB1692FF8400186726 /* DHTorus.m */,
+				DC821DAB1692FF8400186726 /* DHTorus.mm */,
 				DC821DAD1692FF9300186726 /* DHSphere.h */,
-				DC821DAE1692FF9300186726 /* DHSphere.m */,
+				DC821DAE1692FF9300186726 /* DHSphere.mm */,
 				DC821DB01692FF9F00186726 /* DHCapsule.h */,
-				DC821DB11692FF9F00186726 /* DHCapsule.m */,
+				DC821DB11692FF9F00186726 /* DHCapsule.mm */,
 				DC821DB31692FFAC00186726 /* DHCylinder.h */,
-				DC821DB41692FFAC00186726 /* DHCylinder.m */,
+				DC821DB41692FFAC00186726 /* DHCylinder.mm */,
 			);
 			name = primitives;
 			sourceTree = "<group>";
@@ -132,9 +133,10 @@
 		DC980D96168623D5004716D2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				DC0FE14B168F4602003B9CEF /* libglib-2.0.0.dylib */,
+				DCB3C2F816E5B988006AEA95 /* libCGAL.9.0.0.dylib */,
+				DC91A44316EDE186001BB7FB /* libgmp.dylib */,
+				DC91A44516EDE19B001BB7FB /* libmpfr.dylib */,
 				DC0FE144168E21F3003B9CEF /* liblua.dylib */,
-				DC17314E16BADC6900331CD0 /* libgts.dylib */,
 				DC980DD416862EC9004716D2 /* QuartzCore.framework */,
 				DC980DBF16862585004716D2 /* SceneKit.framework */,
 				DC980D97168623D5004716D2 /* Cocoa.framework */,
@@ -158,9 +160,9 @@
 			children = (
 				DC3A3D391690650D00BF983E /* primitives */,
 				DC980DA9168623D5004716D2 /* DHDocument.h */,
-				DC980DAA168623D5004716D2 /* DHDocument.m */,
+				DC980DAA168623D5004716D2 /* DHDocument.mm */,
 				DC980DD116862E7A004716D2 /* DHSCView.h */,
-				DC980DD216862E7A004716D2 /* DHSCView.m */,
+				DC980DD216862E7A004716D2 /* DHSCView.mm */,
 				DC980DAC168623D5004716D2 /* DHDocument.xib */,
 				DC980DAF168623D5004716D2 /* MainMenu.xib */,
 				DC980D9E168623D5004716D2 /* Supporting Files */,
@@ -171,7 +173,6 @@
 		DC980D9E168623D5004716D2 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				DC60881016BE5DE800239A8E /* LICENSE.txt */,
 				DC980D9F168623D5004716D2 /* luaCSG-Info.plist */,
 				DC980DA0168623D5004716D2 /* InfoPlist.strings */,
 				DC980DA3168623D5004716D2 /* main.m */,
@@ -235,7 +236,6 @@
 				DC980DA2168623D5004716D2 /* InfoPlist.strings in Resources */,
 				DC980DAE168623D5004716D2 /* DHDocument.xib in Resources */,
 				DC980DB1168623D5004716D2 /* MainMenu.xib in Resources */,
-				DC60881116BE5DE800239A8E /* LICENSE.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -247,16 +247,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				DC980DA4168623D5004716D2 /* main.m in Sources */,
-				DC980DAB168623D5004716D2 /* DHDocument.m in Sources */,
-				DC980DD316862E7A004716D2 /* DHSCView.m in Sources */,
-				DC0FE14A168F1FE7003B9CEF /* DHPrimitive.m in Sources */,
-				DC821DA21692FF5100186726 /* DHBox.m in Sources */,
-				DC821DA61692FF6600186726 /* DHCone.m in Sources */,
-				DC821DA91692FF7500186726 /* DHTube.m in Sources */,
-				DC821DAC1692FF8400186726 /* DHTorus.m in Sources */,
-				DC821DAF1692FF9300186726 /* DHSphere.m in Sources */,
-				DC821DB21692FF9F00186726 /* DHCapsule.m in Sources */,
-				DC821DB51692FFAC00186726 /* DHCylinder.m in Sources */,
+				DC980DAB168623D5004716D2 /* DHDocument.mm in Sources */,
+				DC980DD316862E7A004716D2 /* DHSCView.mm in Sources */,
+				DC0FE14A168F1FE7003B9CEF /* DHPrimitive.mm in Sources */,
+				DC91A45C16EE1828001BB7FB /* DHBox.mm in Sources */,
+				DC91A45D16EE182B001BB7FB /* DHCone.mm in Sources */,
+				DC91A45E16EE182E001BB7FB /* DHTube.mm in Sources */,
+				DC91A45F16EE1831001BB7FB /* DHTorus.mm in Sources */,
+				DC91A46016EE1834001BB7FB /* DHSphere.mm in Sources */,
+				DC91A46116EE1837001BB7FB /* DHCapsule.mm in Sources */,
+				DC91A46216EE183A001BB7FB /* DHCylinder.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -348,21 +348,25 @@
 		DC980DB5168623D5004716D2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_CXX_LIBRARY = "compiler-default";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "luaCSG/luaCSG-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
 					/usr/local/include/,
-					"/usr/local/Cellar/glib/2.34.3/include/glib-2.0/",
-					"/usr/local//Cellar/glib/2.34.3/lib/glib-2.0/include/",
+					/usr/local/Cellar/cgal/4.1/include,
 				);
 				INFOPLIST_FILE = "luaCSG/luaCSG-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/Cellar/glib/2.34.3/lib,
+					/usr/local/Cellar/cgal/4.1/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -370,21 +374,25 @@
 		DC980DB6168623D5004716D2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_CXX_LIBRARY = "compiler-default";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "luaCSG/luaCSG-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
 					/usr/local/include/,
-					"/usr/local/Cellar/glib/2.34.3/include/glib-2.0/",
-					"/usr/local//Cellar/glib/2.34.3/lib/glib-2.0/include/",
+					/usr/local/Cellar/cgal/4.1/include,
 				);
 				INFOPLIST_FILE = "luaCSG/luaCSG-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/Cellar/glib/2.34.3/lib,
+					/usr/local/Cellar/cgal/4.1/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
