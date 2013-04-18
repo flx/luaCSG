@@ -26,10 +26,12 @@
 
 #include <stdio.h>
 #include <string.h>
+
+extern "C" {
 #include <lua.h>
 #include <lauxlib.h>
 #include <lualib.h>
-
+}
 
 void error (lua_State *L, const char *fmt, ...) {
     va_list argp;
@@ -104,7 +106,7 @@ static int rotate(lua_State *L) {
 }
 
 static int difference(lua_State *L) {
-    stackDump(L);
+//    stackDump(L);
     /* retrieve the document pointer */
     lua_pushstring(L, "doc");  /* push key */
     lua_gettable(L, LUA_REGISTRYINDEX);  /* retrieve value */

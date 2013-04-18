@@ -17,7 +17,7 @@ union(s1,s2)
 
 s = sphere(1)
 for alpha=0.01, 2*math.pi, 0.1 do
-  print(x)
+  -- print(x)
   x = 10 * math.sin(alpha)
   y = 10 * math.cos(alpha)
   temp = sphere(1)

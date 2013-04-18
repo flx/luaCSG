@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		DC0FE145168E21F3003B9CEF /* liblua.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DC0FE144168E21F3003B9CEF /* liblua.dylib */; };
 		DC0FE14A168F1FE7003B9CEF /* DHPrimitive.mm in Sources */ = {isa = PBXBuildFile; fileRef = DC0FE149168F1FE7003B9CEF /* DHPrimitive.mm */; };
+		DC16ABB7171FA0B70045DBB2 /* liblua.5.1.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DC16ABB6171FA0B70045DBB2 /* liblua.5.1.5.dylib */; };
 		DC91A44416EDE186001BB7FB /* libgmp.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DC91A44316EDE186001BB7FB /* libgmp.dylib */; };
 		DC91A44616EDE19B001BB7FB /* libmpfr.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DC91A44516EDE19B001BB7FB /* libmpfr.dylib */; };
 		DC91A45C16EE1828001BB7FB /* DHBox.mm in Sources */ = {isa = PBXBuildFile; fileRef = DC821DA11692FF5100186726 /* DHBox.mm */; };
@@ -31,9 +31,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		DC0FE144168E21F3003B9CEF /* liblua.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblua.dylib; path = ../../../../../usr/local/lib/liblua.dylib; sourceTree = "<group>"; };
 		DC0FE148168F1FE7003B9CEF /* DHPrimitive.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = DHPrimitive.h; sourceTree = "<group>"; };
 		DC0FE149168F1FE7003B9CEF /* DHPrimitive.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = DHPrimitive.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		DC16ABB6171FA0B70045DBB2 /* liblua.5.1.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblua.5.1.5.dylib; path = ../../../../../usr/local/Cellar/lua/5.1.5/lib/liblua.5.1.5.dylib; sourceTree = "<group>"; };
 		DC821DA01692FF5100186726 /* DHBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DHBox.h; sourceTree = "<group>"; };
 		DC821DA11692FF5100186726 /* DHBox.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DHBox.mm; sourceTree = "<group>"; };
 		DC821DA41692FF6600186726 /* DHCone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DHCone.h; sourceTree = "<group>"; };
@@ -79,10 +79,10 @@
 				DC980DD516862EC9004716D2 /* QuartzCore.framework in Frameworks */,
 				DC980DC016862585004716D2 /* SceneKit.framework in Frameworks */,
 				DC980D98168623D5004716D2 /* Cocoa.framework in Frameworks */,
-				DC0FE145168E21F3003B9CEF /* liblua.dylib in Frameworks */,
 				DCB3C2F916E5B988006AEA95 /* libCGAL.9.0.0.dylib in Frameworks */,
 				DC91A44416EDE186001BB7FB /* libgmp.dylib in Frameworks */,
 				DC91A44616EDE19B001BB7FB /* libmpfr.dylib in Frameworks */,
+				DC16ABB7171FA0B70045DBB2 /* liblua.5.1.5.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -136,7 +136,7 @@
 				DCB3C2F816E5B988006AEA95 /* libCGAL.9.0.0.dylib */,
 				DC91A44316EDE186001BB7FB /* libgmp.dylib */,
 				DC91A44516EDE19B001BB7FB /* libmpfr.dylib */,
-				DC0FE144168E21F3003B9CEF /* liblua.dylib */,
+				DC16ABB6171FA0B70045DBB2 /* liblua.5.1.5.dylib */,
 				DC980DD416862EC9004716D2 /* QuartzCore.framework */,
 				DC980DBF16862585004716D2 /* SceneKit.framework */,
 				DC980D97168623D5004716D2 /* Cocoa.framework */,
@@ -364,9 +364,13 @@
 					"$(inherited)",
 					/usr/local/Cellar/glib/2.34.3/lib,
 					/usr/local/Cellar/cgal/4.1/lib,
+					/usr/local/Cellar/lua/5.2.1/lib,
+					/usr/local/Cellar/lua/5.1.5/lib,
 				);
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
+				VALID_ARCHS = x86_64;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -390,9 +394,12 @@
 					"$(inherited)",
 					/usr/local/Cellar/glib/2.34.3/lib,
 					/usr/local/Cellar/cgal/4.1/lib,
+					/usr/local/Cellar/lua/5.2.1/lib,
+					/usr/local/Cellar/lua/5.1.5/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
+				VALID_ARCHS = x86_64;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

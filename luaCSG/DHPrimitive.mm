@@ -23,6 +23,7 @@
 #import <SceneKit/SceneKit.h>
 #import <QuartzCore/CATransform3D.h>
 
+
 // static helper functions for the glib / gts stuff *******************************************************************************************
 
 void printTransform(CATransform3D p)
@@ -35,6 +36,44 @@ void printTransform(CATransform3D p)
 }
 
 struct _DHTriangleElement {uint v1, v2, v3; };  typedef struct _DHTriangleElement DHTriangleElement;
+
+// A modifier creating a triangle with the incremental builder.
+template <class HDS>
+class Build_surface : public CGAL::Modifier_base<HDS> {
+    DHPrimitive *p;
+    NSArray *vArray;
+    NSArray *eArray;
+    NSDictionary *refDic;
+public:
+    Build_surface(DHPrimitive *_p, NSArray *_vArray, NSArray *_eArray, NSDictionary *_refDic) {
+        p = _p;
+        vArray = _vArray;
+        eArray = _eArray;
+        refDic = _refDic;
+    }
+    void operator()( HDS& hds) {
+        // Postcondition: `hds' is a valid polyhedral surface.
+        CGAL::Polyhedron_incremental_builder_3<HDS> B( hds, true);
+        typedef typename HDS::Vertex   Vertex;
+        typedef typename Vertex::Point Point;
+        B.begin_surface( [vArray count], [eArray count], 0);
+        for (NSNumber *n in vArray) {
+            SCNVector3 vertex = [p getVector:[n intValue]];
+            B.add_vertex( Point( vertex.x, vertex.y, vertex.z));
+        }
+        
+        for (NSData *eData in eArray) {
+            DHTriangleElement *triangle = (DHTriangleElement*)[eData bytes];
+            B.begin_facet();
+            B.add_vertex_to_facet([((NSNumber*)[refDic objectForKey:[NSNumber numberWithInt: triangle->v1]]) intValue]);
+            B.add_vertex_to_facet([((NSNumber*)[refDic objectForKey:[NSNumber numberWithInt: triangle->v2]]) intValue]);
+            B.add_vertex_to_facet([((NSNumber*)[refDic objectForKey:[NSNumber numberWithInt: triangle->v3]]) intValue]);
+            B.end_facet();
+        }
+        B.end_surface();
+    }
+};
+
 
 //static void apply_matrix (GtsPoint * p, gpointer * data)
 //{
@@ -168,8 +207,8 @@ struct _DHTriangleElement {uint v1, v2, v3; };  typedef struct _DHTriangleElemen
 
 -(void) setTransform:(CATransform3D)transform
 {
-    NSLog(@"setTransform");
-    printTransform(transform);
+//    NSLog(@"setTransform");
+//    printTransform(transform);
     [super setTransform:transform];
 }
 
@@ -178,7 +217,7 @@ struct _DHTriangleElement {uint v1, v2, v3; };  typedef struct _DHTriangleElemen
     NSLog(@"applyLocalTransform");
     printTransform(self.transform);
     for (SCNNode *node in self.childNodes) [(DHPrimitive*) node applyLocalTransform];
-    CATransform3D transform = self.transform;
+//    CATransform3D transform = self.transform;
 //    CATransform3D transform = CATransform3DConcat(self.worldTransform, self.transform);
 //    gts_surface_foreach_vertex (_surface, (GtsFunc) apply_matrix, (gpointer*) &transform);
     [self generateGeometry];
@@ -297,8 +336,9 @@ struct _DHTriangleElement {uint v1, v2, v3; };  typedef struct _DHTriangleElemen
 }
 
 
--(SCNVector3) getVector:(uint)i fromGeometrySource: (SCNGeometrySource *) vectorSource
+-(SCNVector3) getVector:(uint)i
 {
+    SCNGeometrySource *vectorSource = [[_generatedGeometry geometrySourcesForSemantic:SCNGeometrySourceSemanticVertex] objectAtIndex:0];
     NSInteger nbytes = [vectorSource bytesPerComponent];
     NSInteger stride = [vectorSource dataStride];
     NSInteger offset = [vectorSource dataOffset];
@@ -358,21 +398,20 @@ struct _DHTriangleElement {uint v1, v2, v3; };  typedef struct _DHTriangleElemen
     _generatedGeometry = geometry;
     [_generatedGeometry setFirstMaterial: [self generatedMaterial]];
  
-
     // empty the polyhedron first
     _surface.clear();
     
     SCNGeometrySource *vertices = [[geometry geometrySourcesForSemantic:SCNGeometrySourceSemanticVertex] objectAtIndex:0];
-    
-    // CONTINUE HERE *************************************************************
     
     NSMutableArray *vertexArray = [NSMutableArray arrayWithCapacity:[vertices vectorCount]]; // vertexArray[polyhedronIndex] = vertex index in geometry
     NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithCapacity:[vertices vectorCount]]; // dictionary for vertex coordinates vs vertex reference
     NSMutableDictionary *refDic1 = [NSMutableDictionary dictionaryWithCapacity:[vertices vectorCount]]; // dictionary for mapping duplicate vertices to the first occurrence of the vertex
     NSMutableDictionary *refDic2 = [NSMutableDictionary dictionaryWithCapacity:[vertices vectorCount]]; // dictionary for mapping unique vertices to the actual numbering in the polyhedron
     int j = 0;
+    
+    // set up vertexArray and refDic2 - which allows to map the original vertice numbers to the ones used for the polyhedron
     for (int i = 0; i<[vertices vectorCount]; i++) {
-        SCNVector3 vertex = [self getVector:i fromGeometrySource:vertices];
+        SCNVector3 vertex = [self getVector:i];
         NSString *key = [NSString stringWithFormat:@"%+.10le|%+.10le|%+.10le", vertex.x, vertex.y, vertex.z];
         NSNumber *n = [dic objectForKey: key];
         if (n == Nil) { // this is the first time we encounter these vertex coordinates
@@ -389,9 +428,8 @@ struct _DHTriangleElement {uint v1, v2, v3; };  typedef struct _DHTriangleElemen
     
     //    NSLog(@"%ld vertices in the generated geometry", [dic count]);
 
-    NSMutableDictionary *vertexDict = [NSMutableDictionary dictionaryWithCapacity:[dic count]];
+    // set up the element array
     NSMutableArray *elementArray = [NSMutableArray arrayWithCapacity:[geometry geometryElementCount]];
-    
     SCNGeometryElement *element;
     for (int i=0; i<[geometry geometryElementCount]; i++) {
         element = [geometry geometryElementAtIndex:i];
@@ -402,25 +440,8 @@ struct _DHTriangleElement {uint v1, v2, v3; };  typedef struct _DHTriangleElemen
         }
     }
     
-    int vCount = 0;
-    
-    CGAL::Polyhedron_incremental_builder_3<HDS> B( hds, true);
-    
-    B.begin_surface( [[dic allValues] count], [elementArray count], 0);
-    for (NSNumber *n in vertexArray) {
-        SCNVector3 vertex = [self getVector:[n intValue] fromGeometrySource:vertices];
-        B.add_vertex( Point( 0, 0, 0));
-    }
-    
-    for (NSData *eData in elementArray) {
-        DHTriangleElement *triangle = (DHTriangleElement*)[eData bytes];
-        B.begin_facet();
-        B.add_vertex_to_facet([((NSNumber*)[refDic2 objectForKey:[NSNumber numberWithInt: triangle->v1]]) intValue]);
-        B.add_vertex_to_facet([((NSNumber*)[refDic2 objectForKey:[NSNumber numberWithInt: triangle->v2]]) intValue]);
-        B.add_vertex_to_facet([((NSNumber*)[refDic2 objectForKey:[NSNumber numberWithInt: triangle->v3]]) intValue]);
-        B.end_facet();
-    }
-    B.end_surface();
+    Build_surface<HalfedgeDS> surfaceBuilder(self, vertexArray, elementArray, refDic2);
+    _surface.delegate(surfaceBuilder);
     
     _dirty = NO;
 
@@ -471,55 +492,55 @@ struct _DHTriangleElement {uint v1, v2, v3; };  typedef struct _DHTriangleElemen
 //    uint nvertices = 3 * stats.n_faces; // this is for face_write_dup which is not yet working
 //    GHashTable *vindex;
     
-    NSMutableData *verticeData    = [NSMutableData dataWithLength:sizeof(double)*3*nvertices];
-    NSMutableData *normalData     = [NSMutableData dataWithLength:sizeof(double)*3*nvertices];
-    NSMutableData *textureMapData = [NSMutableData dataWithLength:sizeof(double)*2*nvertices];
-    NSMutableData *elementData    = [NSMutableData dataWithLength:sizeof(uint)  *3*stats.n_faces];
+//    NSMutableData *verticeData    = [NSMutableData dataWithLength:sizeof(double)*3*nvertices];
+//    NSMutableData *normalData     = [NSMutableData dataWithLength:sizeof(double)*3*nvertices];
+//    NSMutableData *textureMapData = [NSMutableData dataWithLength:sizeof(double)*2*nvertices];
+//    NSMutableData *elementData    = [NSMutableData dataWithLength:sizeof(uint)  *3*stats.n_faces];
 
     
     uint n,m; // vertice and face counter
 //    gpointer data[8];
-    data[0] = [verticeData mutableBytes];
-    data[1] = [normalData mutableBytes];
-    data[2] = [textureMapData mutableBytes];
-    data[3] = [elementData mutableBytes];
-    data[4] = &n; // counter for vertices
-    data[5] = vindex = g_hash_table_new (NULL, NULL);
-    data[6] = &_face;
-    data[7] = &m;
+//    data[0] = [verticeData mutableBytes];
+//    data[1] = [normalData mutableBytes];
+//    data[2] = [textureMapData mutableBytes];
+//    data[3] = [elementData mutableBytes];
+//    data[4] = &n; // counter for vertices
+//    data[5] = vindex = g_hash_table_new (NULL, NULL);
+//    data[6] = &_face;
+//    data[7] = &m;
     
     n = m = 0;
 //    gts_surface_foreach_face (_surface, (GtsFunc) write_face, data);
 
-    SCNGeometrySource *verticeSource = [SCNGeometrySource geometrySourceWithVertices:[verticeData mutableBytes] count:nvertices];
-    SCNGeometrySource *normalSource  = [SCNGeometrySource geometrySourceWithNormals: [normalData mutableBytes] count:nvertices];
+//    SCNGeometrySource *verticeSource = [SCNGeometrySource geometrySourceWithVertices:[verticeData mutableBytes] count:nvertices];
+//    SCNGeometrySource *normalSource  = [SCNGeometrySource geometrySourceWithNormals: [normalData mutableBytes] count:nvertices];
 
-    NSArray *sources  = @[verticeSource, normalSource]; //, textureMapData];
-    NSArray *elements = @[[SCNGeometryElement geometryElementWithData:elementData
-                                                        primitiveType:SCNGeometryPrimitiveTypeTriangles
-                                                       primitiveCount:stats.n_faces
-                                                        bytesPerIndex:sizeof(uint)]];
+//    NSArray *sources  = @[verticeSource, normalSource]; //, textureMapData];
+//    NSArray *elements = @[[SCNGeometryElement geometryElementWithData:elementData
+//                                                        primitiveType:SCNGeometryPrimitiveTypeTriangles
+//                                                       primitiveCount:stats.n_faces
+//                                                        bytesPerIndex:sizeof(uint)]];
     
     
-    _generatedGeometry = [SCNGeometry geometryWithSources:sources elements:elements];
-    [_generatedGeometry setFirstMaterial: [self generatedMaterial]];
-    _dirty = NO;
-    [super setGeometry:_generatedGeometry];
+//    _generatedGeometry = [SCNGeometry geometryWithSources:sources elements:elements];
+//    [_generatedGeometry setFirstMaterial: [self generatedMaterial]];
+//    _dirty = NO;
+//    [super setGeometry:_generatedGeometry];
 }
 
 -(void) safeToSTLFileAtPath:(NSString*) path
 {
-    if (!_surface || _dirty) [self generate];
-//    NSLog(@"Save to STL file: %@", path);
-    FILE *fp=fopen([path cStringUsingEncoding:NSUTF8StringEncoding],"w");// "/Users/felix/Desktop/test.stl", "w");
-    gpointer data[2];
-    uint n;
-    data[0] = fp;
-    data[1] = &n;
-    fprintf (data[0], "solid test\n");
-    gts_surface_foreach_face (_surface, (GtsFunc) stl_write_face, data);
-    fprintf (data[0], "endsolid test\n");
-    fclose(fp);
+//    if (_dirty) [self generate];
+////    NSLog(@"Save to STL file: %@", path);
+//    FILE *fp=fopen([path cStringUsingEncoding:NSUTF8StringEncoding],"w");// "/Users/felix/Desktop/test.stl", "w");
+//    gpointer data[2];
+//    uint n;
+//    data[0] = fp;
+//    data[1] = &n;
+//    fprintf (data[0], "solid test\n");
+//    gts_surface_foreach_face (_surface, (GtsFunc) stl_write_face, data);
+//    fprintf (data[0], "endsolid test\n");
+//    fclose(fp);
 }
 
 
@@ -528,18 +549,9 @@ struct _DHTriangleElement {uint v1, v2, v3; };  typedef struct _DHTriangleElemen
     _delta = delta;
 };
 
--(void)destroy_surface
-{
-    if (_surface) {
-        GtsSurfaceTraverse *t;
-        t = gts_surface_traverse_new(_surface,_face);
-        gts_surface_traverse_destroy(t);
-    }
-}
-
 -(void)dealloc
 {
-    [self destroy_surface];
+    _surface.clear();
 }
 
 

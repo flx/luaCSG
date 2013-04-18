@@ -20,16 +20,20 @@
 //  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Polyhedron_3.h>
 #import <Foundation/Foundation.h>
 #import <SceneKit/SceneKit.h>
+
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Polyhedron_incremental_builder_3.h>
 
 
 typedef CGAL::Simple_cartesian<double>     Kernel;
 typedef Kernel::Point_3                    Point_3;
 typedef CGAL::Polyhedron_3<Kernel>         Polyhedron;
 typedef Polyhedron::Vertex_iterator        Vertex_iterator;
+typedef Polyhedron::HalfedgeDS             HalfedgeDS;
 
 enum {
     DHUnion = 1,        // Union of self and all childnodes
@@ -53,7 +57,7 @@ enum {
 
 @property (readwrite, nonatomic) SCNGeometry* generatedGeometry;
 @property (readwrite, nonatomic) SCNMaterial* generatedMaterial;
-@property (readwrite, nonatomic) double      delta;
+@property (readwrite, nonatomic) double       delta;
 @property (readwrite, nonatomic) uint         type; // e.g. DHUnion
 
 @end
