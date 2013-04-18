@@ -22,9 +22,22 @@
 #import "DHPrimitive.h"
 #import <SceneKit/SceneKit.h>
 #import <QuartzCore/CATransform3D.h>
+#import <math.h>
 
+
+#define DH_PRECISION 10000.0 // precision to the 10-thousandth of a unit. As units should be millimeters, this avoids invalid solids from SCNGeometries
 
 // static helper functions for the glib / gts stuff *******************************************************************************************
+
+double myRound(double v) {
+    double w = round(v*DH_PRECISION)/DH_PRECISION;
+    //    if (w ==  0.0) { w = 0.0; NSLog(@"zero");}
+    if (w == -0.0) {
+        w = 0.0;
+//        NSLog(@"minus zero");
+    }
+    return w;
+}
 
 void printTransform(CATransform3D p)
 {
@@ -57,9 +70,11 @@ public:
         typedef typename HDS::Vertex   Vertex;
         typedef typename Vertex::Point Point;
         B.begin_surface( [vArray count], [eArray count], 0);
+        int i = 0;
         for (NSNumber *n in vArray) {
             SCNVector3 vertex = [p getVector:[n intValue]];
             B.add_vertex( Point( vertex.x, vertex.y, vertex.z));
+//            NSLog(@"add vertex %d: %+.10le %+.10le %+.10le",i++, vertex.x, vertex.y, vertex.z);
         }
         
         for (NSData *eData in eArray) {
@@ -68,6 +83,10 @@ public:
             B.add_vertex_to_facet([((NSNumber*)[refDic objectForKey:[NSNumber numberWithInt: triangle->v1]]) intValue]);
             B.add_vertex_to_facet([((NSNumber*)[refDic objectForKey:[NSNumber numberWithInt: triangle->v2]]) intValue]);
             B.add_vertex_to_facet([((NSNumber*)[refDic objectForKey:[NSNumber numberWithInt: triangle->v3]]) intValue]);
+//            NSLog(@"add facet %d %d %d",
+//                  [((NSNumber*)[refDic objectForKey:[NSNumber numberWithInt: triangle->v1]]) intValue],
+//                  [((NSNumber*)[refDic objectForKey:[NSNumber numberWithInt: triangle->v2]]) intValue],
+//                  [((NSNumber*)[refDic objectForKey:[NSNumber numberWithInt: triangle->v3]]) intValue]);
             B.end_facet();
         }
         B.end_surface();
@@ -350,13 +369,13 @@ public:
             [[vectorSource data] getBytes:&dx range: NSMakeRange(i*stride + offset                  , nbytes)];
             [[vectorSource data] getBytes:&dy range: NSMakeRange(i*stride + nbytes + offset         , nbytes)];
             [[vectorSource data] getBytes:&dz range: NSMakeRange(i*stride + nbytes + nbytes + offset, nbytes)];
-            return [self transformVector:SCNVector3Make((CGFloat) dx, (CGFloat) dy, (CGFloat) dz)];
+            return [self transformVector:SCNVector3Make((CGFloat) myRound(dx), (CGFloat) myRound(dy), (CGFloat) myRound(dz))];
         } else if ([vectorSource bytesPerComponent] == 8) {
             CGFloat dx,dy,dz;
             [[vectorSource data] getBytes:&dx range: NSMakeRange(i*stride + offset                  , nbytes)];
             [[vectorSource data] getBytes:&dy range: NSMakeRange(i*stride + nbytes + offset         , nbytes)];
             [[vectorSource data] getBytes:&dz range: NSMakeRange(i*stride + nbytes + nbytes + offset, nbytes)];
-            return [self transformVector:SCNVector3Make((CGFloat) dx, (CGFloat) dy, (CGFloat) dz)];
+            return [self transformVector:SCNVector3Make((CGFloat) myRound(dx), (CGFloat) myRound(dy), (CGFloat) myRound(dz))];
         } else
             NSLog(@"unknown float with %ld bytes per Component.", [vectorSource bytesPerComponent]);
     } else
@@ -447,7 +466,7 @@ public:
 
     BOOL closed1 = _surface.is_closed();
     BOOL valid1 = _surface.is_valid() ;
-    if (!(closed1 && valid1))
+//    if (!(closed1 && valid1))
         NSLog(@"_surface is %@ and %@", closed1 ? @"closed" : @"open", valid1 ? @"valid" : @"not valid");
 }
 
