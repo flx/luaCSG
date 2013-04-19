@@ -29,13 +29,10 @@
 
 // static helper functions for the glib / gts stuff *******************************************************************************************
 
-double myRound(double v) {
+double roundToPrecision(double v) {
     double w = round(v*DH_PRECISION)/DH_PRECISION;
-    //    if (w ==  0.0) { w = 0.0; NSLog(@"zero");}
-    if (w == -0.0) {
-        w = 0.0;
-//        NSLog(@"minus zero");
-    }
+    // apparently 0 can have a sign - so we are getting rid of the negative zeros ...
+    if (w == -0.0) w = 0.0;
     return w;
 }
 
@@ -70,7 +67,7 @@ public:
         typedef typename HDS::Vertex   Vertex;
         typedef typename Vertex::Point Point;
         B.begin_surface( [vArray count], [eArray count], 0);
-        int i = 0;
+//        int i = 0;
         for (NSNumber *n in vArray) {
             SCNVector3 vertex = [p getVector:[n intValue]];
             B.add_vertex( Point( vertex.x, vertex.y, vertex.z));
@@ -186,9 +183,11 @@ public:
     if (self) {
         _dirty = YES;
         _generatedGeometry = nil;
-        self.type = DHUnion; // default is union ...
-                             // Add the hat image
-                             //    NSImage *img = [NSImage imageNamed:@"bnr_hat_only.png"];
+        
+        self.type = DHOpNotSet;
+        
+        // Add an image
+        // NSImage *img = [NSImage imageNamed:@"bnr_hat_only.png"];
         self.generatedMaterial = [SCNMaterial material];
         self.generatedMaterial.diffuse.contents = [NSColor redColor];
         
@@ -197,16 +196,13 @@ public:
 //        self.generatedMaterial.transparency = 0.5;
 //        self.generatedMaterial.transparencyMode = SCNTransparencyModeAOne;
 //        self.generatedMaterial.doubleSided = YES;
-
         
         // Configure all the material properties
         void(^configureMaterialProperty)(SCNMaterialProperty *materialProperty) = ^(SCNMaterialProperty *materialProperty) {
-            // Setup a trilinear filtering
-            //   this is to reduce the aliasing when minimizing / maximizing the images
+            // Setup a trilinear filtering to reduce the aliasing when minimizing / maximizing the images
             materialProperty.minificationFilter  = SCNLinearFiltering;
             materialProperty.magnificationFilter = SCNLinearFiltering;
             materialProperty.mipFilter           = SCNLinearFiltering;
-            
             // Repeat the texture if necessary
             materialProperty.wrapS = SCNRepeat;
             materialProperty.wrapT = SCNRepeat;
@@ -226,110 +222,101 @@ public:
 
 -(void) setTransform:(CATransform3D)transform
 {
-//    NSLog(@"setTransform");
-//    printTransform(transform);
+    NSLog(@"+ setTransform");
+    printTransform(transform);
     [super setTransform:transform];
+    [self applyLocalTransform];
+    printTransform(transform);
+    NSLog(@"- setTransform");
 }
 
 -(void) applyLocalTransform
 {
-    NSLog(@"applyLocalTransform");
+    NSLog(@"+ applyLocalTransform");
     printTransform(self.transform);
-    for (SCNNode *node in self.childNodes) [(DHPrimitive*) node applyLocalTransform];
-//    CATransform3D transform = self.transform;
-//    CATransform3D transform = CATransform3DConcat(self.worldTransform, self.transform);
-//    gts_surface_foreach_vertex (_surface, (GtsFunc) apply_matrix, (gpointer*) &transform);
-    [self generateGeometry];
+    [self applyTransform:self.transform];
     self.transform = CATransform3DIdentity;
     printTransform(self.transform);
+    NSLog(@"- applyLocalTransform");
 }
 
--(void) applyBooleanTransformationsInScene:(SCNScene *)scene
+-(void) applyWorldTransform
 {
-    if (self.childNodes.count > 0) {
-        // Still needs CGALification
-//        GNode *faces_tree1 = gts_bb_tree_surface(_surface);
-//        for (DHPrimitive *p in self.childNodes) {
-//            [p applyLocalTransform]; // in case the thing was moved around a bit more.
-//            [p applyBooleanTransformationsInScene:scene];
-//            
-//            BOOL closed1 = gts_surface_is_closed(_surface);
-//            BOOL orientable1 = gts_surface_is_orientable(_surface);
-//            if (!(closed1 && orientable1))
-//                NSLog(@"surface is %@ and %@",
-//                      closed1 ? @"closed" : @"open",
-//                      orientable1 ? @"orientable" : @"not orientable");
-//
-//            BOOL closed2 = gts_surface_is_closed([p surface]);
-//            BOOL orientable2 = gts_surface_is_orientable([p surface]);
-//            if (!(closed2 && orientable2))
-//                NSLog(@"[p surface] is %@ and %@",
-//                      closed2 ? @"closed" : @"open",
-//                      orientable2 ? @"orientable" : @"not orientable");
-//
-//            BOOL is_open1 = gts_surface_volume (_surface) < 0. ? TRUE : FALSE;
-//            BOOL is_open2 = gts_surface_volume ([p surface]) < 0. ? TRUE : FALSE;
-//            
-//            NSLog(@"surface is %@, [p surface] is %@",is_open1 ? @"open" : @"closed",is_open2 ? @"open" : @"closed");
-//            
-//            GNode *faces_tree2 = gts_bb_tree_surface([p surface]);
-//            
-//            GtsSurfaceInter* surfaceInter = gts_surface_inter_new(gts_surface_inter_class(), _surface, [p surface], faces_tree1, faces_tree2, NO, NO);
-//            GtsSurface* tmp;
-//            //        GSList* intersection = gts_surface_intersection(_surface, [p surface], faces_tree1, faces_tree2); // these are a list of edges on the intersection ... YAY!
-//            switch (self.type) {
-//                case DHUnion:
-//                    tmp = gts_surface_new(gts_surface_class(), gts_face_class(), gts_edge_class(), gts_vertex_class());
-//                    gts_surface_inter_boolean(surfaceInter, tmp, GTS_1_OUT_2); // add parts of surface 1 that lie outside surface
-//                    gts_surface_inter_boolean(surfaceInter, tmp, GTS_2_OUT_1); // add parts of surface 2 that lie outside _surface
-//                    delete_surface(_surface);
-//                    _surface = tmp;
-//                    break;
-//                case DHDifference:
-//                    tmp = gts_surface_new(gts_surface_class(), gts_face_class(), gts_edge_class(), gts_vertex_class());
-//                    gts_surface_inter_boolean(surfaceInter, tmp, GTS_2_IN_1); // add parts of surface 2 that lie outside _surface
-//                    triangle_revert(tmp); // this breaks the closed and orientable condition but keeps it displayable
-//                    gts_surface_inter_boolean(surfaceInter, tmp, GTS_1_OUT_2); // add parts of surface 2 that lie outside _surface
-//                    delete_surface(_surface);
-//                    _surface = tmp;
-//                    break;
-//                case DHIntersection:
-//                    tmp = gts_surface_new(gts_surface_class(), gts_face_class(), gts_edge_class(), gts_vertex_class());
-//                    gts_surface_inter_boolean(surfaceInter, tmp, GTS_1_IN_2); // add parts of surface 2 that lie outside _surface
-//                    gts_surface_inter_boolean(surfaceInter, tmp, GTS_2_IN_1); // add parts of surface 2 that lie outside _surface
-//                    delete_surface(_surface);
-//                    _surface = tmp;
-//                    break;
-//                default:
-//                    NSLog(@"No valid boolean operation type.");
-//            }
-//            gts_kdtree_destroy(faces_tree2);
-//            //        g_slist_free(intersection);
-////            [p removeFromParentNode];
-//        }
-//        
-//        for (DHPrimitive *p in self.childNodes) {
-//            p.transform = self.worldTransform;
-//            [scene.rootNode addChildNode:p];
-//            p.geometry.firstMaterial.transparency = 0.9;
-//            p.geometry.firstMaterial.transparencyMode = SCNTransparencyModeRGBZero;
-//        }
-//        
-//        gts_kdtree_destroy(faces_tree1);
-//        
-//        edge_deduplicate(_surface);
-//        triangle_cleanup(_surface);
-//        edge_cleanup(_surface);
-//        
-//        [self generateGeometry];
-//        BOOL closed1 = gts_surface_is_closed(_surface);
-//        BOOL orientable1 = gts_surface_is_orientable(_surface);
-//        if (!(closed1 && orientable1))
-//            NSLog(@"After boolean operation %@ :surface is %@ and %@",
-//                  self.type == DHUnion ? @"DHUnion" : (self.type == DHDifference ? @"DHDifference" : (self.type == DHIntersection ? @"DHIntersection" : @"unkown")),
-//                  closed1 ? @"closed" : @"open",
-//                  orientable1 ? @"orientable" : @"not orientable");
+    NSLog(@"+ applyWorldTransform");
+    printTransform(self.worldTransform);
+    [self applyTransform:self.worldTransform];
+    self.transform = CATransform3DIdentity;
+    printTransform(self.worldTransform);
+    NSLog(@"- applyWorldTransform");
+}
+
+-(void) applyTransform: (CATransform3D) t
+{
+    NSLog(@"+ applyTransform");
+    printTransform(t);
+    
+    //propagate transform through child nodes
+    for (SCNNode *node in self.childNodes) [(DHPrimitive*) node applyTransform: t];
+    
+    // Not sure I got the indices right ... file:///Users/felix/Programming/CGAL%20html/cgal_manual/Kernel_23_ref/Class_Aff_transformation_3.html#Cross_link_anchor_348
+    AffTransform A(t.m11, t.m12, t.m13, t.m14,
+                   t.m21, t.m22, t.m23, t.m24,
+                   t.m31, t.m32, t.m11, t.m34,
+                   t.m44);
+    
+    std::transform( _surface.points_begin(), _surface.points_end(), _surface.points_begin(),A);
+    [self generateGeometry];
+    NSLog(@"- applyTransform");
+}
+
+-(void) applyBooleanOperationsInScene:(SCNScene *)scene
+{
+    NSLog(@"+ applyBooleanOperationsInScene");
+
+    NSLog(@"before:");
+    BOOL closed1 = _surface.is_closed();
+    BOOL valid1 = _surface.is_valid() ;
+//    if (!(closed1 && valid1))
+    NSLog(@"_surface is %@ and %@", closed1 ? @"closed" : @"open", valid1 ? @"valid" : @"not valid");
+
+    if (self.childNodes.count > 0) { // are there any?
+        NSLog(@"is this identity?");
+        printTransform(self.transform);
+        
+        for (DHPrimitive *p in self.childNodes) {
+            // [p applyLocalTransform]; // this should not be necessary any more
+            [p applyBooleanOperationsInScene:scene]; // apply boolean operations on child nodes, if necessary
+            
+            if(_surface.is_closed()) {
+                Nef_polyhedron n2 = [p nef_surface];
+                if (DHUnion        == [p type]) _nef_surface += n2;
+                if (DHDifference   == [p type]) _nef_surface -= n2;
+                if (DHIntersection == [p type]) _nef_surface *= n2;
+                
+                if(_nef_surface.is_simple()) {
+                    _nef_surface.convert_to_polyhedron(_surface);
+                } else
+                    NSLog(@"_surface is not a 2-manifold.");
+            }
+
+        }
+        
+        // keep child nodes around - transparently
+        for (DHPrimitive *p in self.childNodes) {
+            // p.transform = self.worldTransform; // this should not be necessary any more
+            [scene.rootNode addChildNode:p];
+            p.geometry.firstMaterial.transparency = 0.9;
+            p.geometry.firstMaterial.transparencyMode = SCNTransparencyModeRGBZero;
+        }
+                
+        [self generateGeometry];
     }
+    NSLog(@"after:");
+    closed1 = _surface.is_closed();
+    valid1 = _surface.is_valid() ;
+    //    if (!(closed1 && valid1))
+    NSLog(@"_surface is %@ and %@", closed1 ? @"closed" : @"open", valid1 ? @"valid" : @"not valid");
+    NSLog(@"- applyBooleanOperationsInScene");
 }
 
 
@@ -339,6 +326,14 @@ public:
     [self generate];
     return _surface;
 }
+
+-(Nef_polyhedron) nef_surface
+{
+    if (!_dirty) return _nef_surface;
+    [self generate];
+    return _nef_surface;
+}
+
 
 -(SCNGeometry *) generatedGeometry
 {
@@ -369,13 +364,13 @@ public:
             [[vectorSource data] getBytes:&dx range: NSMakeRange(i*stride + offset                  , nbytes)];
             [[vectorSource data] getBytes:&dy range: NSMakeRange(i*stride + nbytes + offset         , nbytes)];
             [[vectorSource data] getBytes:&dz range: NSMakeRange(i*stride + nbytes + nbytes + offset, nbytes)];
-            return [self transformVector:SCNVector3Make((CGFloat) myRound(dx), (CGFloat) myRound(dy), (CGFloat) myRound(dz))];
+            return [self transformVector:SCNVector3Make((CGFloat) roundToPrecision(dx), (CGFloat) roundToPrecision(dy), (CGFloat) roundToPrecision(dz))];
         } else if ([vectorSource bytesPerComponent] == 8) {
             CGFloat dx,dy,dz;
             [[vectorSource data] getBytes:&dx range: NSMakeRange(i*stride + offset                  , nbytes)];
             [[vectorSource data] getBytes:&dy range: NSMakeRange(i*stride + nbytes + offset         , nbytes)];
             [[vectorSource data] getBytes:&dz range: NSMakeRange(i*stride + nbytes + nbytes + offset, nbytes)];
-            return [self transformVector:SCNVector3Make((CGFloat) myRound(dx), (CGFloat) myRound(dy), (CGFloat) myRound(dz))];
+            return [self transformVector:SCNVector3Make((CGFloat) roundToPrecision(dx), (CGFloat) roundToPrecision(dy), (CGFloat) roundToPrecision(dz))];
         } else
             NSLog(@"unknown float with %ld bytes per Component.", [vectorSource bytesPerComponent]);
     } else
@@ -431,7 +426,7 @@ public:
     // set up vertexArray and refDic2 - which allows to map the original vertice numbers to the ones used for the polyhedron
     for (int i = 0; i<[vertices vectorCount]; i++) {
         SCNVector3 vertex = [self getVector:i];
-        NSString *key = [NSString stringWithFormat:@"%+.10le|%+.10le|%+.10le", vertex.x, vertex.y, vertex.z];
+        NSString *key = [NSString stringWithFormat:@"%.10le|%.10le|%.10le", vertex.x, vertex.y, vertex.z];
         NSNumber *n = [dic objectForKey: key];
         if (n == Nil) { // this is the first time we encounter these vertex coordinates
             [dic setObject:[NSNumber numberWithInt:i] forKey:key];
@@ -474,10 +469,10 @@ public:
 -(void) generate
 {
     // generateSurface can set only _surface, but also _geometry, in which case we don't need to run generateGeometry
-//    if (_surface == nil)
-        [self generateSurface];
-    if (_generatedGeometry == nil) [self generateGeometry];
-//    if (_surface == nil) NSLog(@"huh?");
+    [self generateGeometry]; // calls [self generateSurface];
+    // [self generateSurface];
+    Nef_polyhedron N1(_surface);
+    _nef_surface = N1;
     _dirty = NO;
 }
 

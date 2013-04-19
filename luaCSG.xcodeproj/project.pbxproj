@@ -8,7 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		DC0FE14A168F1FE7003B9CEF /* DHPrimitive.mm in Sources */ = {isa = PBXBuildFile; fileRef = DC0FE149168F1FE7003B9CEF /* DHPrimitive.mm */; };
-		DC16ABB7171FA0B70045DBB2 /* liblua.5.1.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DC16ABB6171FA0B70045DBB2 /* liblua.5.1.5.dylib */; };
+		DC16ABB91720FACE0045DBB2 /* liblua.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DC16ABB81720FACE0045DBB2 /* liblua.dylib */; };
+		DC16ABBB1720FAE60045DBB2 /* libCGAL.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DC16ABBA1720FAE60045DBB2 /* libCGAL.dylib */; };
 		DC91A44416EDE186001BB7FB /* libgmp.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DC91A44316EDE186001BB7FB /* libgmp.dylib */; };
 		DC91A44616EDE19B001BB7FB /* libmpfr.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DC91A44516EDE19B001BB7FB /* libmpfr.dylib */; };
 		DC91A45C16EE1828001BB7FB /* DHBox.mm in Sources */ = {isa = PBXBuildFile; fileRef = DC821DA11692FF5100186726 /* DHBox.mm */; };
@@ -27,13 +28,13 @@
 		DC980DC016862585004716D2 /* SceneKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC980DBF16862585004716D2 /* SceneKit.framework */; };
 		DC980DD316862E7A004716D2 /* DHSCView.mm in Sources */ = {isa = PBXBuildFile; fileRef = DC980DD216862E7A004716D2 /* DHSCView.mm */; };
 		DC980DD516862EC9004716D2 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC980DD416862EC9004716D2 /* QuartzCore.framework */; };
-		DCB3C2F916E5B988006AEA95 /* libCGAL.9.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DCB3C2F816E5B988006AEA95 /* libCGAL.9.0.0.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		DC0FE148168F1FE7003B9CEF /* DHPrimitive.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = DHPrimitive.h; sourceTree = "<group>"; };
 		DC0FE149168F1FE7003B9CEF /* DHPrimitive.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = DHPrimitive.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		DC16ABB6171FA0B70045DBB2 /* liblua.5.1.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblua.5.1.5.dylib; path = ../../../../../usr/local/Cellar/lua/5.1.5/lib/liblua.5.1.5.dylib; sourceTree = "<group>"; };
+		DC16ABB81720FACE0045DBB2 /* liblua.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblua.dylib; path = ../../../../../usr/local/lib/liblua.dylib; sourceTree = "<group>"; };
+		DC16ABBA1720FAE60045DBB2 /* libCGAL.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libCGAL.dylib; path = ../../../../../usr/local/lib/libCGAL.dylib; sourceTree = "<group>"; };
 		DC821DA01692FF5100186726 /* DHBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DHBox.h; sourceTree = "<group>"; };
 		DC821DA11692FF5100186726 /* DHBox.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DHBox.mm; sourceTree = "<group>"; };
 		DC821DA41692FF6600186726 /* DHCone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DHCone.h; sourceTree = "<group>"; };
@@ -60,14 +61,13 @@
 		DC980DA3168623D5004716D2 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		DC980DA5168623D5004716D2 /* luaCSG-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "luaCSG-Prefix.pch"; sourceTree = "<group>"; };
 		DC980DA9168623D5004716D2 /* DHDocument.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DHDocument.h; sourceTree = "<group>"; };
-		DC980DAA168623D5004716D2 /* DHDocument.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DHDocument.mm; sourceTree = "<group>"; };
+		DC980DAA168623D5004716D2 /* DHDocument.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = DHDocument.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		DC980DAD168623D5004716D2 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/DHDocument.xib; sourceTree = "<group>"; };
 		DC980DB0168623D5004716D2 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		DC980DBF16862585004716D2 /* SceneKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SceneKit.framework; path = System/Library/Frameworks/SceneKit.framework; sourceTree = SDKROOT; };
 		DC980DD116862E7A004716D2 /* DHSCView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DHSCView.h; sourceTree = "<group>"; };
 		DC980DD216862E7A004716D2 /* DHSCView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DHSCView.mm; sourceTree = "<group>"; };
 		DC980DD416862EC9004716D2 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		DCB3C2F816E5B988006AEA95 /* libCGAL.9.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libCGAL.9.0.0.dylib; path = ../../../../../usr/local/Cellar/cgal/4.1/lib/libCGAL.9.0.0.dylib; sourceTree = "<group>"; };
 		DCF5885C1693535200D85EF6 /* Primitives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Primitives.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -79,10 +79,10 @@
 				DC980DD516862EC9004716D2 /* QuartzCore.framework in Frameworks */,
 				DC980DC016862585004716D2 /* SceneKit.framework in Frameworks */,
 				DC980D98168623D5004716D2 /* Cocoa.framework in Frameworks */,
-				DCB3C2F916E5B988006AEA95 /* libCGAL.9.0.0.dylib in Frameworks */,
 				DC91A44416EDE186001BB7FB /* libgmp.dylib in Frameworks */,
 				DC91A44616EDE19B001BB7FB /* libmpfr.dylib in Frameworks */,
-				DC16ABB7171FA0B70045DBB2 /* liblua.5.1.5.dylib in Frameworks */,
+				DC16ABB91720FACE0045DBB2 /* liblua.dylib in Frameworks */,
+				DC16ABBB1720FAE60045DBB2 /* libCGAL.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -133,10 +133,10 @@
 		DC980D96168623D5004716D2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				DCB3C2F816E5B988006AEA95 /* libCGAL.9.0.0.dylib */,
+				DC16ABBA1720FAE60045DBB2 /* libCGAL.dylib */,
 				DC91A44316EDE186001BB7FB /* libgmp.dylib */,
 				DC91A44516EDE19B001BB7FB /* libmpfr.dylib */,
-				DC16ABB6171FA0B70045DBB2 /* liblua.5.1.5.dylib */,
+				DC16ABB81720FACE0045DBB2 /* liblua.dylib */,
 				DC980DD416862EC9004716D2 /* QuartzCore.framework */,
 				DC980DBF16862585004716D2 /* SceneKit.framework */,
 				DC980D97168623D5004716D2 /* Cocoa.framework */,

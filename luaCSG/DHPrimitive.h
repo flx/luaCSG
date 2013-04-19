@@ -25,6 +25,7 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 
@@ -32,28 +33,38 @@
 typedef CGAL::Simple_cartesian<double>     Kernel;
 typedef Kernel::Point_3                    Point_3;
 typedef CGAL::Polyhedron_3<Kernel>         Polyhedron;
+typedef CGAL::Nef_polyhedron_3<Kernel>     Nef_polyhedron;
+
 typedef Polyhedron::Vertex_iterator        Vertex_iterator;
 typedef Polyhedron::HalfedgeDS             HalfedgeDS;
 
+typedef CGAL::Aff_transformation_3<Kernel> AffTransform;
+
 enum {
-    DHUnion = 1,        // Union of self and all childnodes
-    DHDifference = 2,   // Difference of self - (union of all childnodes)
+    DHOpNotSet     = 0, // for nodes that are not children in a boolean operation
+    DHUnion        = 1, // Union of self and all childnodes
+    DHDifference   = 2, // Difference of self - (union of all childnodes)
     DHIntersection = 3  // Intersection of self and all childnodes
 };
 
 @interface DHPrimitive : SCNNode {
-    BOOL         _dirty;
-    Polyhedron   _surface;
+    BOOL           _dirty;
+    Polyhedron     _surface;
+    Nef_polyhedron _nef_surface;
 }
 
 -(Polyhedron) surface;
+-(Nef_polyhedron) nef_surface;
+
 -(void) generate;
 -(void) generateSurface;
 -(void) generateGeometry;
 -(void) safeToSTLFileAtPath:(NSString*) path;
 
 -(void) applyLocalTransform;
--(void) applyBooleanTransformationsInScene:(SCNScene *)scene;
+-(void) applyWorldTransform;
+-(void) applyTransform: (CATransform3D) t;
+-(void) applyBooleanOperationsInScene:(SCNScene *)scene;
 
 @property (readwrite, nonatomic) SCNGeometry* generatedGeometry;
 @property (readwrite, nonatomic) SCNMaterial* generatedMaterial;

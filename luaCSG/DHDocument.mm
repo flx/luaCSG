@@ -120,8 +120,8 @@ static int difference(lua_State *L) {
     
     if (doc && p1 && p2) {
         [p1 addChildNode:p2];
-        p1.type = DHDifference;
-        [p1 applyBooleanTransformationsInScene:doc.scene];
+        p2.type = DHDifference;
+        [p1 applyBooleanOperationsInScene:doc.scene];
     } else NSLog(@"no pointers!");
     
     return 0;  /* number of results */
@@ -141,7 +141,7 @@ static int intersection(lua_State *L) {
     if (doc && p1 && p2) {
         [p1 addChildNode:p2];
         p1.type = DHIntersection;
-        [p1 applyBooleanTransformationsInScene:doc.scene];
+        [p1 applyBooleanOperationsInScene:doc.scene];
     } else NSLog(@"no pointers!");
     
     return 0;  /* number of results */
@@ -162,7 +162,7 @@ static int do_union(lua_State *L) {
     if (doc && p1 && p2) {
         [p1 addChildNode:p2];
         p1.type = DHUnion;
-        [p1 applyBooleanTransformationsInScene:doc.scene];
+        [p1 applyBooleanOperationsInScene:doc.scene];
         [p1 safeToSTLFileAtPath:@"/Users/felix/Desktop/union.stl"];
     } else NSLog(@"no pointers!");
     
@@ -449,7 +449,7 @@ static int create_cylinder(lua_State *L) {
 ////        [p1 generateGeometry];
 ////        [p2 generateGeometry];
 //        [p1 addChildNode:p2];
-//        [p1 applyBooleanTransformations];
+//        [p1 applyBooleanOperations];
 //        [root addChildNode:p1];
 //        [p1 safeToSTLFileAtPath:[NSString stringWithFormat:@"/Users/felix/Desktop/%@.stl", name]];
 //    };
