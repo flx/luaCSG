@@ -41,10 +41,11 @@
 }
 
 // this function is to be overridden
--(void) generateSurface
+-(BOOL) generateGeometry
 {
     SCNGeometry *geom = [SCNTorus torusWithRingRadius:_ringRadius pipeRadius:_pipeRadius];
-    [self setGeneratedGeometry:geom];
+    [self setGeometry:geom];
+    return YES;
 }
 
 
@@ -54,7 +55,7 @@
     if (self) {
         _ringRadius = ringRadius;
         _pipeRadius = pipeRadius;
-        [super setGeometry:self.generatedGeometry]; // triggers the generation of all the stuff ...
+        [self generate];
     }
     return self;
 }

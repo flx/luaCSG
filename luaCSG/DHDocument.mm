@@ -140,7 +140,7 @@ static int intersection(lua_State *L) {
     
     if (doc && p1 && p2) {
         [p1 addChildNode:p2];
-        p1.type = DHIntersection;
+        p2.type = DHIntersection;
         [p1 applyBooleanOperationsInScene:doc.scene];
     } else NSLog(@"no pointers!");
     
@@ -161,7 +161,7 @@ static int do_union(lua_State *L) {
     
     if (doc && p1 && p2) {
         [p1 addChildNode:p2];
-        p1.type = DHUnion;
+        p2.type = DHUnion;
         [p1 applyBooleanOperationsInScene:doc.scene];
         [p1 safeToSTLFileAtPath:@"/Users/felix/Desktop/union.stl"];
     } else NSLog(@"no pointers!");

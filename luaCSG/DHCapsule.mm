@@ -40,10 +40,11 @@ CGFloat fabs(CGFloat f) {return f < 0.0 ? -f : f;}
 }
 
 // this function is to be overridden
--(void) generateSurface
+-(BOOL) generateGeometry
 {
     SCNGeometry *geom = [SCNCapsule capsuleWithCapRadius:_capRadius height:_height];
-    [self setGeneratedGeometry:geom];
+    [self setGeometry:geom];
+    return YES;
 }
 
 
@@ -53,7 +54,7 @@ CGFloat fabs(CGFloat f) {return f < 0.0 ? -f : f;}
     if (self) {
         _capRadius = capRadius;
         _height = height;
-        [super setGeometry:self.generatedGeometry]; // triggers the generation of all the stuff ...
+        [self generate];
     }
     return self;
 }

@@ -38,11 +38,11 @@
 }
 
 // this function is to be overridden
--(void) generateSurface
+-(BOOL) generateGeometry
 {
     SCNGeometry *geom = [SCNCone coneWithTopRadius:0.0 bottomRadius:_bottomRadius height:_height];
-    
-    [self setGeneratedGeometry:geom];
+    [self setGeometry:geom];
+    return YES;
 }
 
 
@@ -53,7 +53,7 @@
 //        _topRadius = topRadius;
         _bottomRadius = bottomRadius;
         _height   = height;
-        [super setGeometry:self.generatedGeometry]; // triggers the generation of all the stuff ...
+        [self generate];
     }
     return self;
 }

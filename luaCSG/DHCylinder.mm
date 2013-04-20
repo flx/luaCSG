@@ -35,10 +35,11 @@
 }
 
 // this function is to be overridden
--(void) generateSurface
+-(BOOL) generateGeometry
 {
     SCNGeometry *geom = [SCNCylinder cylinderWithRadius:_radius height:_height];
-    [self setGeneratedGeometry:geom];
+    [self setGeometry:geom];
+    return YES;
 }
 
 
@@ -48,7 +49,7 @@
     if (self) {
         _radius = radius;
         _height = height;
-        [super setGeometry:self.generatedGeometry]; // triggers the generation of all the stuff ...
+        [self generate];
     }
     return self;
 }

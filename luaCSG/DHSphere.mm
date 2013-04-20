@@ -36,10 +36,11 @@
 }
 
 // this function is to be overridden
--(void) generateSurface
+-(BOOL) generateGeometry
 {
     SCNGeometry *geom = [SCNSphere sphereWithRadius:_radius];
-    [self setGeneratedGeometry:geom];
+    [self setGeometry:geom];
+    return YES;
 }
 
 
@@ -48,7 +49,7 @@
     self = [super init];
     if (self) {
         _radius = radius;
-        [super setGeometry:self.generatedGeometry]; // triggers the generation of all the stuff ...
+        [self generate];
     }
     return self;
 }

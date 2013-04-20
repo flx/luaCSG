@@ -29,19 +29,18 @@
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 
-//typedef CGAL::Lazy_exact_nt<CGAL::Quotient<CGAL::MP_Float> > NT;
-
-typedef CGAL::Cartesian<CGAL::Gmpq>     Kernel;
-//typedef CGAL::Homogeneous<double>  Kernel;
-
-typedef CGAL::Polyhedron_3<Kernel>  Polyhedron;
+// this is the only Kernel that didn't through compiler errors in conjunction with the nef polyhedrons ... 
+typedef CGAL::Cartesian<CGAL::Gmpq>    Kernel;
+typedef CGAL::Polyhedron_3<Kernel>     Polyhedron;
 typedef CGAL::Nef_polyhedron_3<Kernel> Nef_polyhedron;
-typedef Kernel::Vector_3  Vector_3;
-typedef Kernel::Point_3                    Point_3;
-typedef Kernel::Aff_transformation_3  AffTransform;
+typedef Kernel::Vector_3               Vector_3;
+typedef Kernel::Point_3                Point_3;
+typedef Kernel::Aff_transformation_3   AffTransform;
 
-typedef Polyhedron::Vertex_iterator        Vertex_iterator;
-typedef Polyhedron::HalfedgeDS             HalfedgeDS;
+typedef Polyhedron::Vertex_iterator    Vertex_iterator;
+typedef Polyhedron::HalfedgeDS         HalfedgeDS;
+typedef Polyhedron::Facet_iterator     Facet_iterator;
+typedef Polyhedron::Halfedge_around_facet_circulator Halfedge_facet_circulator;
 
 enum {
     DHOpNotSet     = 0, // for nodes that are not children in a boolean operation
@@ -58,12 +57,14 @@ enum {
     Nef_polyhedron _nef_polyhedron;
 }
 
--(Polyhedron) polyhedron;
+// accessors for polyhedra - never to be written to
+-(Polyhedron)     polyhedron;
 -(Nef_polyhedron) nef_polyhedron;
 
 -(void) generate;
--(void) generatePolyhedron;
--(void) generateGeometry;
+-(BOOL) generatePolyhedron;
+-(BOOL) generateGeometry;
+-(void) geometryFromPolyhedron;
 -(void) safeToSTLFileAtPath:(NSString*) path;
 
 -(void) applyLocalTransform;
@@ -71,7 +72,7 @@ enum {
 -(void) applyTransform: (CATransform3D) t;
 -(void) applyBooleanOperationsInScene:(SCNScene *)scene;
 
-@property (readwrite, nonatomic) SCNGeometry* generatedGeometry;
+// @property (readwrite, nonatomic) SCNGeometry* generatedGeometry;
 @property (readwrite, nonatomic) SCNMaterial* generatedMaterial;
 @property (readwrite, nonatomic) double       delta;
 @property (readwrite, nonatomic) uint         type; // e.g. DHUnion

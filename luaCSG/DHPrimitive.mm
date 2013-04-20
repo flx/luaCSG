@@ -91,78 +91,9 @@ public:
 };
 
 
-//static void apply_matrix (GtsPoint * p, gpointer * data)
-//{
-//    p->x = ((CATransform3D*)data)->m11 * p->x + ((CATransform3D*)data)->m21 * p->y + ((CATransform3D*)data)->m31 * p->z + ((CATransform3D*)data)->m41;
-//    p->y = ((CATransform3D*)data)->m12 * p->x + ((CATransform3D*)data)->m22 * p->y + ((CATransform3D*)data)->m32 * p->z + ((CATransform3D*)data)->m42;
-//    p->z = ((CATransform3D*)data)->m13 * p->x + ((CATransform3D*)data)->m23 * p->y + ((CATransform3D*)data)->m33 * p->z + ((CATransform3D*)data)->m43;
-//}
-
-//static void write_face (GtsTriangle * t, gpointer * data)
-//{
-//    *((GtsFace**)data[6]) = (GtsFace *)t; // keep a reference to a face around for traversal at destruction
-//    
-//    // triangle data - these are the vertex indices from the hashtable
-//    GtsVertex *v1, *v2, *v3;
-//    gts_triangle_vertices(t,&v1,&v2,&v3);
-//
-//    uint v1i = (*((uint *) data[4]));
-//    uint v2i = (*((uint *) data[4]))+1;
-//    uint v3i = (*((uint *) data[4]))+2;
-//
-//    // write vertices - every face gets its own 3 vertices as I can't know when they should have common vertices and normals *****
-//    ((double*)data[0])[v1i*3]   = v1->p.x; ((double*)data[0])[v1i*3+1] = v1->p.y; ((double*)data[0])[v1i*3+2] = v1->p.z;
-//    ((double*)data[0])[v2i*3]   = v2->p.x; ((double*)data[0])[v2i*3+1] = v2->p.y; ((double*)data[0])[v2i*3+2] = v2->p.z;
-//    ((double*)data[0])[v3i*3]   = v3->p.x; ((double*)data[0])[v3i*3+1] = v3->p.y; ((double*)data[0])[v3i*3+2] = v3->p.z;
-//
-//    // write triangle data
-//    ((uint*)data[3])[(*((uint *) data[7]))*3]   = v1i; // = GPOINTER_TO_UINT (g_hash_table_lookup (data[5], v1));
-//    ((uint*)data[3])[(*((uint *) data[7]))*3+1] = v2i; // = GPOINTER_TO_UINT (g_hash_table_lookup (data[5], v2));
-//    ((uint*)data[3])[(*((uint *) data[7]))*3+2] = v3i; // = GPOINTER_TO_UINT (g_hash_table_lookup (data[5], v3));
-//    
-//    // write normals *****
-//    double x,y,z;
-//    gts_triangle_normal(t, &x, &y, &z);
-//    
-//    ((double*)data[1])[v1i*3]   = x; ((double*)data[1])[v2i*3]   = x; ((double*)data[1])[v3i*3]   = x;
-//    ((double*)data[1])[v1i*3+1] = y; ((double*)data[1])[v2i*3+1] = y; ((double*)data[1])[v3i*3+1] = y;
-//    ((double*)data[1])[v1i*3+2] = z; ((double*)data[1])[v2i*3+2] = z; ((double*)data[1])[v3i*3+2] = z;
-//    
-//    (*((uint *) data[4])) += 3; // increment by 3 vertices
-//    (*((uint *) data[7])) ++;   // increment by 1 face
-//}
-//
-//static void stl_write_face (GtsTriangle * t, gpointer * data)
-//{
-//    double x,y,z;
-//    gts_triangle_normal(t, &x, &y, &z);
-//    double norm = sqrt(x*x + y*y + z*z); //NSLog(@"norm = %lf", norm);
-//    GtsVertex *v1, *v2, *v3;
-//    gts_triangle_vertices(t,&v1,&v2,&v3);
-//    
-//    fprintf (data[0], "facet normal %lf %lf %lf\nouter loop\nvertex %lf %lf %lf\nvertex %lf %lf %lf\nvertex %lf %lf %lf\nendloop\nendfacet\n",
-//             x/norm,y/norm,z/norm,
-//             v1->p.x,v1->p.y,v1->p.z,
-//             v2->p.x,v2->p.y,v2->p.z,
-//             v3->p.x,v3->p.y,v3->p.z);
-//}
-//
-//void sphereFunc(double **a, GtsCartesianGrid g, uint i, gpointer data)
-//{
-//    for (uint j=0; j<g. nx;j++) {
-//        for (uint k=0; k<g.ny; k++) {
-//            double x = g.x + j*g.dx;
-//            double y = g.y + k*g.dy;
-//            double z = g.z;
-//            double val = x*x + y*y + z*z - 0.25;
-//            a[j][k] = val;
-//        }
-//    }
-//}
-
 @implementation DHPrimitive
 
-@synthesize generatedGeometry = _generatedGeometry;
+// @synthesize generatedGeometry = _generatedGeometry;
 
 - (void)addChildNode:(SCNNode *) child
 {
@@ -174,17 +105,19 @@ public:
 //    printTransform(CATransform3DInvert(self.transform));
 //    printTransform(CATransform3DConcat(child.transform,CATransform3DInvert(self.transform)));
     child.transform = CATransform3DConcat(child.transform,CATransform3DInvert(self.transform));
-//    printTransform(child.transform);
+    [(DHPrimitive*) child applyWorldTransform];
+    NSLog(@"child transform");
+    printTransform(child.transform);
     [super addChildNode:child];
 }
 
-- (id)init {
+- (id)init
+{
     self = [super init];
     if (self) {
-        _dirty_polyhedron = YES;
+        _dirty_polyhedron     = YES;
         _dirty_nef_polyhedron = YES;
-        _dirty_transform = YES;
-        _generatedGeometry = nil;
+        _dirty_transform      = YES;
         
         self.type = DHOpNotSet;
         
@@ -193,11 +126,11 @@ public:
         self.generatedMaterial = [SCNMaterial material];
         self.generatedMaterial.diffuse.contents = [NSColor redColor];
         
-//        self.generatedMaterial.transparency = 0.5;
-//        self.generatedMaterial.transparencyMode = SCNTransparencyModeRGBZero;
-//        self.generatedMaterial.transparency = 0.5;
-//        self.generatedMaterial.transparencyMode = SCNTransparencyModeAOne;
-//        self.generatedMaterial.doubleSided = YES;
+        // self.generatedMaterial.transparency = 0.5;
+        // self.generatedMaterial.transparencyMode = SCNTransparencyModeRGBZero;
+        // self.generatedMaterial.transparency = 0.5;
+        // self.generatedMaterial.transparencyMode = SCNTransparencyModeAOne;
+        // self.generatedMaterial.doubleSided = YES;
         
         // Configure all the material properties
         void(^configureMaterialProperty)(SCNMaterialProperty *materialProperty) = ^(SCNMaterialProperty *materialProperty) {
@@ -226,8 +159,14 @@ public:
 {
     NSLog(@"+ setTransform");
     printTransform(transform);
-    [super setTransform:transform];
-    printTransform(transform);
+    
+    if (!CATransform3DEqualToTransform(transform,CATransform3DIdentity)) {
+        [super setTransform:transform];
+        for (SCNNode *node in self.childNodes) [(DHPrimitive*) node applyWorldTransform];
+        [self applyWorldTransform];
+    }
+       
+    //printTransform(transform);
     NSLog(@"- setTransform");
 }
 
@@ -236,6 +175,7 @@ public:
     NSLog(@"+ applyLocalTransform");
     [self applyTransform:self.transform];
     self.transform = CATransform3DIdentity;
+    _dirty_transform = NO;
     NSLog(@"- applyLocalTransform");
 }
 
@@ -244,6 +184,7 @@ public:
     NSLog(@"+ applyWorldTransform");
     [self applyTransform:self.worldTransform];
     self.transform = CATransform3DIdentity;
+    _dirty_transform = NO;
     NSLog(@"- applyWorldTransform");
 }
 
@@ -252,49 +193,67 @@ public:
     NSLog(@"+ applyTransform");
     printTransform(t);
     
-    //propagate transform through child nodes
-    for (SCNNode *node in self.childNodes) [(DHPrimitive*) node applyTransform: t];
-    
     // Not sure I got the indices right ... file:///Users/felix/Programming/CGAL%20html/cgal_manual/Kernel_23_ref/Class_Aff_transformation_3.html#Cross_link_anchor_348
     AffTransform A(t.m11, t.m12, t.m13, t.m14,
                    t.m21, t.m22, t.m23, t.m24,
-                   t.m31, t.m32, t.m11, t.m34,
-                   t.m44);
+                   t.m31, t.m32, t.m33, t.m34,
+                                        t.m44);
     
-    std::transform( _polyhedron.points_begin(), _polyhedron.points_end(), _polyhedron.points_begin(),A);
-    [self generateGeometry];
+    // std::transform( _polyhedron.points_begin(), _polyhedron.points_end(), _polyhedron.points_begin(),A);
+    _nef_polyhedron.transform(A);
+    
+    [self geometryFromPolyhedron];
     NSLog(@"- applyTransform");
 }
 
 -(void) applyBooleanOperationsInScene:(SCNScene *)scene
 {
     NSLog(@"+ applyBooleanOperationsInScene");
-
-    NSLog(@"before:");
-    BOOL closed1 = _polyhedron.is_closed();
-    BOOL valid1 = _polyhedron.is_valid() ;
+//    NSLog(@"before:");
+//    BOOL closed1 = _polyhedron.is_closed();
+//    BOOL valid1 = _polyhedron.is_valid() ;
 //    if (!(closed1 && valid1))
-    NSLog(@"_polyhedron is %@ and %@", closed1 ? @"closed" : @"open", valid1 ? @"valid" : @"not valid");
-
+//        NSLog(@"_polyhedron is %@ and %@", closed1 ? @"closed" : @"open", valid1 ? @"valid" : @"not valid");
+    
+//    if (_dirty_transform) [self applyWorldTransform];
+    
     if (self.childNodes.count > 0) { // are there any?
-        NSLog(@"is this identity?");
-        printTransform(self.transform);
+        if (!CATransform3DEqualToTransform(CATransform3DIdentity, self.worldTransform)) {
+            NSLog(@"WorldTransform is not identity, but should be.");
+            printTransform(self.worldTransform);
+        }
         
         for (DHPrimitive *p in self.childNodes) {
             // [p applyLocalTransform]; // this should not be necessary any more
             [p applyBooleanOperationsInScene:scene]; // apply boolean operations on child nodes, if necessary
             
-            if(_polyhedron.is_closed()) {
+//            if(_polyhedron.is_closed()) {
+                Nef_polyhedron n1 = [self nef_polyhedron];
                 Nef_polyhedron n2 = [p nef_polyhedron];
-                if (DHUnion        == [p type]) _nef_polyhedron += n2;
-                if (DHDifference   == [p type]) _nef_polyhedron -= n2;
-                if (DHIntersection == [p type]) _nef_polyhedron *= n2;
+
+                if        (DHUnion        == [p type]) {
+                    n1 += n2;
+                    NSLog(@"DHUnion -> %i", [p type]);
+                } else if (DHDifference   == [p type]) {
+                    n1 -= n2;
+                    NSLog(@"DHDifference -> %i", [p type]);
+                } else if (DHIntersection == [p type]) {
+                    n1 *= n2;
+                    NSLog(@"DHIntersection -> %i", [p type]);
+                } else
+                    NSLog(@"I did exactly nothing! -> %i", [p type]);
+                
+                _nef_polyhedron.clear();
+                _nef_polyhedron = n1;
                 
                 if(_nef_polyhedron.is_simple()) {
+                    NSLog(@"convert nef_polyhedron back to polyhedron");
+                    _polyhedron.clear();
                     _nef_polyhedron.convert_to_polyhedron(_polyhedron);
+//                    [self geometryFromPolyhedron];
                 } else
-                    NSLog(@"_polyhedron is not a 2-manifold.");
-            }
+                    NSLog(@"****************** _polyhedron is not a 2-manifold.");
+//            }
 
         }
         
@@ -306,18 +265,18 @@ public:
             p.geometry.firstMaterial.transparencyMode = SCNTransparencyModeRGBZero;
         }
                 
-        [self generateGeometry];
+        [self geometryFromPolyhedron];
     }
-    NSLog(@"after:");
-    closed1 = _polyhedron.is_closed();
-    valid1 = _polyhedron.is_valid() ;
-    //    if (!(closed1 && valid1))
-    NSLog(@"_polyhedron is %@ and %@", closed1 ? @"closed" : @"open", valid1 ? @"valid" : @"not valid");
+//    NSLog(@"after:");
+//    closed1 = _polyhedron.is_closed();
+//    valid1 = _polyhedron.is_valid() ;
+//    if (!(closed1 && valid1))
+//        NSLog(@"_polyhedron is %@ and %@", closed1 ? @"closed" : @"open", valid1 ? @"valid" : @"not valid");
     NSLog(@"- applyBooleanOperationsInScene");
 }
 
 
--(Polyhedron) surface
+-(Polyhedron) polyhedron
 {
     if (!_dirty_polyhedron) return _polyhedron;
     [self generate];
@@ -327,16 +286,14 @@ public:
 -(Nef_polyhedron) nef_polyhedron
 {
     if (!_dirty_nef_polyhedron) return _nef_polyhedron;
-    [self generate];
+    
+    // Only create the nef polyhedron if there is any need
+    _nef_polyhedron.clear();
+    Nef_polyhedron N1(_polyhedron);
+    _nef_polyhedron = N1;
+    _dirty_nef_polyhedron = NO;
+    
     return _nef_polyhedron;
-}
-
-
--(SCNGeometry *) generatedGeometry
-{
-    if (_generatedGeometry && !_dirty_polyhedron) return _generatedGeometry;
-    [self generate];
-    return _generatedGeometry;
 }
 
 // this to override the geometry produced by SceneKit primitives ...
@@ -349,7 +306,7 @@ public:
 
 -(SCNVector3) getVector:(uint)i
 {
-    SCNGeometrySource *vectorSource = [[_generatedGeometry geometrySourcesForSemantic:SCNGeometrySourceSemanticVertex] objectAtIndex:0];
+    SCNGeometrySource *vectorSource = [[self.geometry geometrySourcesForSemantic:SCNGeometrySourceSemanticVertex] objectAtIndex:0];
     NSInteger nbytes = [vectorSource bytesPerComponent];
     NSInteger stride = [vectorSource dataStride];
     NSInteger offset = [vectorSource dataOffset];
@@ -404,15 +361,50 @@ public:
 }
 
 // setting it with a SCNGeometry object - note that this only works half with SCNKit primitives, because they don't seem to contain the real geometry data?
--(void) setGeneratedGeometry:(SCNGeometry *)geometry
+-(void) setGeometry:(SCNGeometry *)geometry
 {
-    _generatedGeometry = geometry;
-    [_generatedGeometry setFirstMaterial: [self generatedMaterial]];
- 
+    [geometry setFirstMaterial: [self generatedMaterial]];
+    [super setGeometry: geometry];
+    _dirty_polyhedron = YES;
+    _dirty_nef_polyhedron = YES;
+    [self polyhedronFromGeometry];
+    [self geometryFromPolyhedron];
+}
+
+
+-(void) generate
+{
+    // try to get a new geometry first - if that fails, try to generate the polyhedron and then the geometry
+    if (![self generateGeometry]) {
+        // geometry has not been generated
+        if ([self generatePolyhedron])
+            // polyhedron has been generated - now derive geometry from polyhedron
+            [self geometryFromPolyhedron];
+        else
+            NSLog(@"*************** couldn't generate geometry or polyhedron");
+    } else
+        // geometry has been generated - now derive polyhedron from it
+        [self polyhedronFromGeometry];
+}
+
+// this function is to be overridden
+-(BOOL) generatePolyhedron
+{
+    return NO; // indicate that no geometry has been generated
+}
+
+// this function is to be overridden
+-(BOOL) generateGeometry
+{
+    return NO; // indicate that no geometry has been generated
+}
+
+-(void) polyhedronFromGeometry
+{
     // empty the polyhedron first
     _polyhedron.clear();
     
-    SCNGeometrySource *vertices = [[geometry geometrySourcesForSemantic:SCNGeometrySourceSemanticVertex] objectAtIndex:0];
+    SCNGeometrySource *vertices = [[self.geometry geometrySourcesForSemantic:SCNGeometrySourceSemanticVertex] objectAtIndex:0];
     
     NSMutableArray *vertexArray = [NSMutableArray arrayWithCapacity:[vertices vectorCount]]; // vertexArray[polyhedronIndex] = vertex index in geometry
     NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithCapacity:[vertices vectorCount]]; // dictionary for vertex coordinates vs vertex reference
@@ -438,12 +430,12 @@ public:
     }
     
     //    NSLog(@"%ld vertices in the generated geometry", [dic count]);
-
+    
     // set up the element array
-    NSMutableArray *elementArray = [NSMutableArray arrayWithCapacity:[geometry geometryElementCount]];
+    NSMutableArray *elementArray = [NSMutableArray arrayWithCapacity:[self.geometry geometryElementCount]];
     SCNGeometryElement *element;
-    for (int i=0; i<[geometry geometryElementCount]; i++) {
-        element = [geometry geometryElementAtIndex:i];
+    for (int i=0; i<[self.geometry geometryElementCount]; i++) {
+        element = [self.geometry geometryElementAtIndex:i];
         for(int j=0; j<[element primitiveCount]; j++) {
             DHTriangleElement triangle = [self getElement:j fromGeometryElement:element];
             NSData *eData = [NSData dataWithBytes: &triangle length:sizeof(DHTriangleElement)];
@@ -455,109 +447,152 @@ public:
     _polyhedron.delegate(surfaceBuilder);
     
     _dirty_polyhedron = NO;
-
+    Nef_polyhedron n(_polyhedron);
+    _nef_polyhedron.clear();
+    _nef_polyhedron = n;
+    _dirty_nef_polyhedron = NO;
+    
     BOOL closed1 = _polyhedron.is_closed();
     BOOL valid1 = _polyhedron.is_valid() ;
-//    if (!(closed1 && valid1))
+    if (!(closed1 && valid1))
         NSLog(@"_polyhedron is %@ and %@", closed1 ? @"closed" : @"open", valid1 ? @"valid" : @"not valid");
 }
 
-
--(void) generate
+-(void) geometryFromPolyhedron
 {
-    // generatePolyhedron can set only _polyhedron, but also _geometry, in which case we don't need to run generateGeometry
-    [self generateGeometry]; // calls [self generatePolyhedron];
-    // [self generatePolyhedron];
-    _nef_polyhedron.clear();
-    Nef_polyhedron N1(_polyhedron);
-    _nef_polyhedron = N1;
+    NSLog(@"+geometryFromPolyhedron");
+
+    if(_nef_polyhedron.is_simple()) {
+        NSLog(@"convert nef_polyhedron back to polyhedron");
+        _polyhedron.clear();
+        _nef_polyhedron.convert_to_polyhedron(_polyhedron);
+        //                    [self geometryFromPolyhedron];
+    } else
+        NSLog(@"****************** _polyhedron is not a 2-manifold.");
+
+    
+    unsigned long nfacets   = _polyhedron.size_of_facets();
+    unsigned long nvertices = nfacets * 3; // we create 3 new vertices per facet to not create shared normals - we don't have information on the actual normals
+
+    NSMutableData *verticeData    = [NSMutableData dataWithLength:sizeof(double) * 3 * nvertices];
+    NSMutableData *normalData     = [NSMutableData dataWithLength:sizeof(double) * 3 * nvertices];
+    //    NSMutableData *textureMapData = [NSMutableData dataWithLength:sizeof(double) * 2 * nvertices]; // TextureMaps are not implemented yet.
+    NSMutableData *elementData    = [NSMutableData dataWithLength:sizeof(uint)   * 3 * nfacets];
+    
+    uint vindex = 0;
+    uint findex = 0;
+    for (Facet_iterator i = _polyhedron.facets_begin(); i != _polyhedron.facets_end(); ++i) {
+        Halfedge_facet_circulator j = i->facet_begin();
+        // Facets in polyhedral surfaces are at least triangles.
+        CGAL_assertion( CGAL::circulator_size(j) >= 3);
+        if (CGAL::circulator_size(j) != 3) NSLog(@"Found facet with more than 3 vertices.");
+        
+        Point_3 p[3];
+        double x[3], y[3], z[3];
+        uint ind=0;
+        do {
+            // write vertices - every face gets its own 3 vertices as I can't know when they should have common vertices and normals *****
+            if (ind>2) NSLog(@"Error! non-triangular facet found!");
+            else {
+                p[ind] = j->vertex()->point();
+                x[ind] = p[ind].x().to_double();
+                y[ind] = p[ind].y().to_double();
+                z[ind] = p[ind].z().to_double();
+            }
+            ind++;
+        } while ( ++j != i->facet_begin());
+
+        Vector_3 n = CGAL::normal(p[0], p[1], p[2]);
+        
+        double nx = n.x().to_double();
+        double ny = n.y().to_double();
+        double nz = n.z().to_double();
+        double norm = sqrt(nx*nx + ny*ny + nz*nz);
+        
+        for (int k=0; k<3; k++) {
+            // write vertices - every face gets its own 3 vertices as I can't know when they should have common vertices and normals *****
+            ((double*)[verticeData mutableBytes])[vindex*3]   = x[k];
+            ((double*)[verticeData mutableBytes])[vindex*3+1] = y[k];
+            ((double*)[verticeData mutableBytes])[vindex*3+2] = z[k];
+            // write normals *****
+            ((double*)[normalData mutableBytes])[vindex*3]   = nx / norm;
+            ((double*)[normalData mutableBytes])[vindex*3+1] = ny / norm;
+            ((double*)[normalData mutableBytes])[vindex*3+2] = nz / norm;
+            vindex++;
+        }
+        
+        // write triangle data
+        ((uint*)[elementData mutableBytes])[findex*3]   = vindex - 3;
+        ((uint*)[elementData mutableBytes])[findex*3+1] = vindex - 2;
+        ((uint*)[elementData mutableBytes])[findex*3+2] = vindex - 1;
+        findex++;
+    }
+
+    
+    SCNGeometrySource *verticeSource = [SCNGeometrySource geometrySourceWithVertices:(SCNVector3*)[verticeData mutableBytes] count:nvertices];
+    SCNGeometrySource *normalSource  = [SCNGeometrySource geometrySourceWithNormals: (SCNVector3*)[normalData mutableBytes] count:nvertices];
+    
+    NSArray *sources  = @[verticeSource, normalSource]; //, textureMapData];
+    NSArray *elements = @[[SCNGeometryElement geometryElementWithData:elementData
+                                                        primitiveType:SCNGeometryPrimitiveTypeTriangles
+                                                       primitiveCount:nfacets
+                                                        bytesPerIndex:sizeof(uint)]];
+    
+    
+    SCNGeometry *geom = [SCNGeometry geometryWithSources:sources elements:elements];
+    [geom setFirstMaterial: [self generatedMaterial]];
     _dirty_polyhedron = NO;
-}
-
-// this function is to be overridden
--(void) generatePolyhedron
-{
-//    _polyhedron = gts_polyhedron_new(gts_polyhedron_class(), gts_face_class(), gts_edge_class(), gts_vertex_class());
-
-    // sphere through isofunction
-    //    GtsCartesianGrid g;
-    //    g.nx = g.ny = g.nz = 21;
-    //    g.x  = g.y  = g.z  = -0.5;
-    //    g.dx = g.dy = g.dz = 0.05;
-    //    gts_isosurface_cartesian(_polyhedron, g, (GtsIsoCartesianFunc) sphereFunc, &g, 0.0);
-    
-    // sphere through ... sphere!
-
-//    gts_polyhedron_generate_sphere(_polyhedron, 3);
-//    BOOL closed1 = gts_polyhedron_is_closed(_polyhedron);
-//    BOOL orientable1 = gts_polyhedron_is_orientable(_polyhedron);
-//    if (!(closed1 && orientable1))
-//        NSLog(@"_polyhedron is %@ and %@", closed1 ? @"closed" : @"open", orientable1 ? @"orientable" : @"not orientable");
-}
-
--(void) generateGeometry
-{
-//    if (_polyhedron == nil)
-        [self generatePolyhedron];
-//    GtsSurfaceStats stats;
-//    gts_polyhedron_stats (_polyhedron, &stats);
-//    uint nvertices = 3 * stats.n_faces; // this is for face_write_dup which is not yet working
-//    GHashTable *vindex;
-    
-//    NSMutableData *verticeData    = [NSMutableData dataWithLength:sizeof(double)*3*nvertices];
-//    NSMutableData *normalData     = [NSMutableData dataWithLength:sizeof(double)*3*nvertices];
-//    NSMutableData *textureMapData = [NSMutableData dataWithLength:sizeof(double)*2*nvertices];
-//    NSMutableData *elementData    = [NSMutableData dataWithLength:sizeof(uint)  *3*stats.n_faces];
-
-    
-    uint n,m; // vertice and face counter
-//    gpointer data[8];
-//    data[0] = [verticeData mutableBytes];
-//    data[1] = [normalData mutableBytes];
-//    data[2] = [textureMapData mutableBytes];
-//    data[3] = [elementData mutableBytes];
-//    data[4] = &n; // counter for vertices
-//    data[5] = vindex = g_hash_table_new (NULL, NULL);
-//    data[6] = &_face;
-//    data[7] = &m;
-    
-    n = m = 0;
-//    gts_polyhedron_foreach_face (_polyhedron, (GtsFunc) write_face, data);
-
-//    SCNGeometrySource *verticeSource = [SCNGeometrySource geometrySourceWithVertices:[verticeData mutableBytes] count:nvertices];
-//    SCNGeometrySource *normalSource  = [SCNGeometrySource geometrySourceWithNormals: [normalData mutableBytes] count:nvertices];
-
-//    NSArray *sources  = @[verticeSource, normalSource]; //, textureMapData];
-//    NSArray *elements = @[[SCNGeometryElement geometryElementWithData:elementData
-//                                                        primitiveType:SCNGeometryPrimitiveTypeTriangles
-//                                                       primitiveCount:stats.n_faces
-//                                                        bytesPerIndex:sizeof(uint)]];
-    
-    
-//    _generatedGeometry = [SCNGeometry geometryWithSources:sources elements:elements];
-//    [_generatedGeometry setFirstMaterial: [self generatedMaterial]];
-//    _dirty = NO;
-//    [super setGeometry:_generatedGeometry];
+    [super setGeometry:geom]; // [self setGeometry:...] would trigger re-creating the polyhedron -> call super
+    NSLog(@"-geometryFromPolyhedron");
 }
 
 -(void) safeToSTLFileAtPath:(NSString*) path
 {
-//    if (_dirty) [self generate];
-////    NSLog(@"Save to STL file: %@", path);
-//    FILE *fp=fopen([path cStringUsingEncoding:NSUTF8StringEncoding],"w");// "/Users/felix/Desktop/test.stl", "w");
-//    gpointer data[2];
-//    uint n;
-//    data[0] = fp;
-//    data[1] = &n;
-//    fprintf (data[0], "solid test\n");
-//    gts_polyhedron_foreach_face (_polyhedron, (GtsFunc) stl_write_face, data);
-//    fprintf (data[0], "endsolid test\n");
-//    fclose(fp);
+    if (_dirty_polyhedron) [self generate];
+    NSLog(@"Save to STL file: %@", path);
+    FILE *fp=fopen([path cStringUsingEncoding:NSUTF8StringEncoding],"w");// "/Users/felix/Desktop/test.stl", "w");
+    fprintf (fp, "solid test\n");
+    
+    for (Facet_iterator i = _polyhedron.facets_begin(); i != _polyhedron.facets_end(); ++i) {
+        Halfedge_facet_circulator j = i->facet_begin();
+        // Facets in polyhedral surfaces are at least triangles.
+        CGAL_assertion( CGAL::circulator_size(j) >= 3);
+        if (CGAL::circulator_size(j) != 3) NSLog(@"Found facet with more than 3 vertices.");
+
+        double x[3], y[3], z[3];
+        Point_3 p[3];
+        uint ind=0;
+        do {
+            // write vertices - every face gets its own 3 vertices as I can't know when they should have common vertices and normals *****
+            p[ind] = j->vertex()->point();
+            x[ind] = p[ind].x().to_double();
+            y[ind] = p[ind].y().to_double();
+            z[ind] = p[ind].z().to_double();
+            ind++;
+        } while ( ++j != i->facet_begin());
+        
+        Vector_3 n = CGAL::normal(p[0], p[1], p[2]);
+        
+        double nx = n.x().to_double();
+        double ny = n.y().to_double();
+        double nz = n.z().to_double();
+        double norm = sqrt(nx*nx + ny*ny + nz*nz);
+
+        fprintf (fp, "facet normal %lf %lf %lf\nouter loop\nvertex %lf %lf %lf\nvertex %lf %lf %lf\nvertex %lf %lf %lf\nendloop\nendfacet\n",
+                 nx/norm, ny/norm, nz/norm,
+                 x[0], y[0], z[0],
+                 x[1], y[1], z[1],
+                 x[2], y[2], z[2]);
+    }
+
+    fprintf (fp, "endsolid test\n");
+    fclose(fp);
 }
 
 
 -(void) setDelta:(double)delta {
     _dirty_polyhedron = YES;
+    _dirty_nef_polyhedron = YES;
     _delta = delta;
 };
 

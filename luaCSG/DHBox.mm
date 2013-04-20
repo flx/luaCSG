@@ -39,11 +39,11 @@
 }
 
 // this function is to be overridden
--(void) generateSurface
+-(BOOL) generateGeometry
 {
     SCNGeometry *geom = [SCNBox boxWithWidth:_width height:_height length:_length chamferRadius:0.0];
-    
-    [self setGeneratedGeometry:geom];
+    [self setGeometry:geom];
+    return YES;
 }
 
 
@@ -54,7 +54,7 @@
         _height   = height;
         _length   = length;
         _width    = width;
-        [super setGeometry:self.generatedGeometry]; // triggers the generation of all the stuff ...
+        [self generate];
     }
     return self;
 }

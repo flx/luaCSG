@@ -39,11 +39,11 @@
 }
 
 // this function is to be overridden
--(void) generateSurface
+-(BOOL) generateGeometry
 {
     SCNGeometry *geom = [SCNTube tubeWithInnerRadius:_innerRadius outerRadius:_outerRadius height:_height];
-    
-    [self setGeneratedGeometry:geom];
+    [self setGeometry:geom];
+    return YES;
 }
 
 
@@ -54,7 +54,7 @@
         _innerRadius = innerRadius;
         _outerRadius = outerRadius;
         _height   = height;
-        [super setGeometry:self.generatedGeometry]; // triggers the generation of all the stuff ...
+        [self generate];
     }
     return self;
 }
