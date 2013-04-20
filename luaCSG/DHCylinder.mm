@@ -46,7 +46,6 @@
 {
     self = [super init];
     if (self) {
-        _dirty    = NO;
         _radius = radius;
         _height = height;
         [super setGeometry:self.generatedGeometry]; // triggers the generation of all the stuff ...

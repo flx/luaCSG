@@ -52,7 +52,6 @@
 {
     self = [super init];
     if (self) {
-        _dirty    = NO;
         _ringRadius = ringRadius;
         _pipeRadius = pipeRadius;
         [super setGeometry:self.generatedGeometry]; // triggers the generation of all the stuff ...

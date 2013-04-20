@@ -23,22 +23,25 @@
 #import <Foundation/Foundation.h>
 #import <SceneKit/SceneKit.h>
 
+#include <CGAL/Gmpq.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Nef_polyhedron_3.h>
-#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 
+//typedef CGAL::Lazy_exact_nt<CGAL::Quotient<CGAL::MP_Float> > NT;
 
-typedef CGAL::Simple_cartesian<double>     Kernel;
+typedef CGAL::Cartesian<CGAL::Gmpq>     Kernel;
+//typedef CGAL::Homogeneous<double>  Kernel;
+
+typedef CGAL::Polyhedron_3<Kernel>  Polyhedron;
+typedef CGAL::Nef_polyhedron_3<Kernel> Nef_polyhedron;
+typedef Kernel::Vector_3  Vector_3;
 typedef Kernel::Point_3                    Point_3;
-typedef CGAL::Polyhedron_3<Kernel>         Polyhedron;
-typedef CGAL::Nef_polyhedron_3<Kernel>     Nef_polyhedron;
+typedef Kernel::Aff_transformation_3  AffTransform;
 
 typedef Polyhedron::Vertex_iterator        Vertex_iterator;
 typedef Polyhedron::HalfedgeDS             HalfedgeDS;
-
-typedef CGAL::Aff_transformation_3<Kernel> AffTransform;
 
 enum {
     DHOpNotSet     = 0, // for nodes that are not children in a boolean operation
@@ -48,16 +51,18 @@ enum {
 };
 
 @interface DHPrimitive : SCNNode {
-    BOOL           _dirty;
-    Polyhedron     _surface;
-    Nef_polyhedron _nef_surface;
+    BOOL           _dirty_polyhedron;
+    BOOL           _dirty_nef_polyhedron;
+    BOOL           _dirty_transform;
+    Polyhedron     _polyhedron;
+    Nef_polyhedron _nef_polyhedron;
 }
 
--(Polyhedron) surface;
--(Nef_polyhedron) nef_surface;
+-(Polyhedron) polyhedron;
+-(Nef_polyhedron) nef_polyhedron;
 
 -(void) generate;
--(void) generateSurface;
+-(void) generatePolyhedron;
 -(void) generateGeometry;
 -(void) safeToSTLFileAtPath:(NSString*) path;
 

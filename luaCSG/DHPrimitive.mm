@@ -49,13 +49,13 @@ struct _DHTriangleElement {uint v1, v2, v3; };  typedef struct _DHTriangleElemen
 
 // A modifier creating a triangle with the incremental builder.
 template <class HDS>
-class Build_surface : public CGAL::Modifier_base<HDS> {
+class Build_polyhedron : public CGAL::Modifier_base<HDS> {
     DHPrimitive *p;
     NSArray *vArray;
     NSArray *eArray;
     NSDictionary *refDic;
 public:
-    Build_surface(DHPrimitive *_p, NSArray *_vArray, NSArray *_eArray, NSDictionary *_refDic) {
+    Build_polyhedron(DHPrimitive *_p, NSArray *_vArray, NSArray *_eArray, NSDictionary *_refDic) {
         p = _p;
         vArray = _vArray;
         eArray = _eArray;
@@ -181,7 +181,9 @@ public:
 - (id)init {
     self = [super init];
     if (self) {
-        _dirty = YES;
+        _dirty_polyhedron = YES;
+        _dirty_nef_polyhedron = YES;
+        _dirty_transform = YES;
         _generatedGeometry = nil;
         
         self.type = DHOpNotSet;
@@ -225,7 +227,6 @@ public:
     NSLog(@"+ setTransform");
     printTransform(transform);
     [super setTransform:transform];
-    [self applyLocalTransform];
     printTransform(transform);
     NSLog(@"- setTransform");
 }
@@ -233,20 +234,16 @@ public:
 -(void) applyLocalTransform
 {
     NSLog(@"+ applyLocalTransform");
-    printTransform(self.transform);
     [self applyTransform:self.transform];
     self.transform = CATransform3DIdentity;
-    printTransform(self.transform);
     NSLog(@"- applyLocalTransform");
 }
 
 -(void) applyWorldTransform
 {
     NSLog(@"+ applyWorldTransform");
-    printTransform(self.worldTransform);
     [self applyTransform:self.worldTransform];
     self.transform = CATransform3DIdentity;
-    printTransform(self.worldTransform);
     NSLog(@"- applyWorldTransform");
 }
 
@@ -264,7 +261,7 @@ public:
                    t.m31, t.m32, t.m11, t.m34,
                    t.m44);
     
-    std::transform( _surface.points_begin(), _surface.points_end(), _surface.points_begin(),A);
+    std::transform( _polyhedron.points_begin(), _polyhedron.points_end(), _polyhedron.points_begin(),A);
     [self generateGeometry];
     NSLog(@"- applyTransform");
 }
@@ -274,10 +271,10 @@ public:
     NSLog(@"+ applyBooleanOperationsInScene");
 
     NSLog(@"before:");
-    BOOL closed1 = _surface.is_closed();
-    BOOL valid1 = _surface.is_valid() ;
+    BOOL closed1 = _polyhedron.is_closed();
+    BOOL valid1 = _polyhedron.is_valid() ;
 //    if (!(closed1 && valid1))
-    NSLog(@"_surface is %@ and %@", closed1 ? @"closed" : @"open", valid1 ? @"valid" : @"not valid");
+    NSLog(@"_polyhedron is %@ and %@", closed1 ? @"closed" : @"open", valid1 ? @"valid" : @"not valid");
 
     if (self.childNodes.count > 0) { // are there any?
         NSLog(@"is this identity?");
@@ -287,16 +284,16 @@ public:
             // [p applyLocalTransform]; // this should not be necessary any more
             [p applyBooleanOperationsInScene:scene]; // apply boolean operations on child nodes, if necessary
             
-            if(_surface.is_closed()) {
-                Nef_polyhedron n2 = [p nef_surface];
-                if (DHUnion        == [p type]) _nef_surface += n2;
-                if (DHDifference   == [p type]) _nef_surface -= n2;
-                if (DHIntersection == [p type]) _nef_surface *= n2;
+            if(_polyhedron.is_closed()) {
+                Nef_polyhedron n2 = [p nef_polyhedron];
+                if (DHUnion        == [p type]) _nef_polyhedron += n2;
+                if (DHDifference   == [p type]) _nef_polyhedron -= n2;
+                if (DHIntersection == [p type]) _nef_polyhedron *= n2;
                 
-                if(_nef_surface.is_simple()) {
-                    _nef_surface.convert_to_polyhedron(_surface);
+                if(_nef_polyhedron.is_simple()) {
+                    _nef_polyhedron.convert_to_polyhedron(_polyhedron);
                 } else
-                    NSLog(@"_surface is not a 2-manifold.");
+                    NSLog(@"_polyhedron is not a 2-manifold.");
             }
 
         }
@@ -312,32 +309,32 @@ public:
         [self generateGeometry];
     }
     NSLog(@"after:");
-    closed1 = _surface.is_closed();
-    valid1 = _surface.is_valid() ;
+    closed1 = _polyhedron.is_closed();
+    valid1 = _polyhedron.is_valid() ;
     //    if (!(closed1 && valid1))
-    NSLog(@"_surface is %@ and %@", closed1 ? @"closed" : @"open", valid1 ? @"valid" : @"not valid");
+    NSLog(@"_polyhedron is %@ and %@", closed1 ? @"closed" : @"open", valid1 ? @"valid" : @"not valid");
     NSLog(@"- applyBooleanOperationsInScene");
 }
 
 
 -(Polyhedron) surface
 {
-    if (!_dirty) return _surface;
+    if (!_dirty_polyhedron) return _polyhedron;
     [self generate];
-    return _surface;
+    return _polyhedron;
 }
 
--(Nef_polyhedron) nef_surface
+-(Nef_polyhedron) nef_polyhedron
 {
-    if (!_dirty) return _nef_surface;
+    if (!_dirty_nef_polyhedron) return _nef_polyhedron;
     [self generate];
-    return _nef_surface;
+    return _nef_polyhedron;
 }
 
 
 -(SCNGeometry *) generatedGeometry
 {
-    if (_generatedGeometry && !_dirty) return _generatedGeometry;
+    if (_generatedGeometry && !_dirty_polyhedron) return _generatedGeometry;
     [self generate];
     return _generatedGeometry;
 }
@@ -413,7 +410,7 @@ public:
     [_generatedGeometry setFirstMaterial: [self generatedMaterial]];
  
     // empty the polyhedron first
-    _surface.clear();
+    _polyhedron.clear();
     
     SCNGeometrySource *vertices = [[geometry geometrySourcesForSemantic:SCNGeometrySourceSemanticVertex] objectAtIndex:0];
     
@@ -454,55 +451,56 @@ public:
         }
     }
     
-    Build_surface<HalfedgeDS> surfaceBuilder(self, vertexArray, elementArray, refDic2);
-    _surface.delegate(surfaceBuilder);
+    Build_polyhedron<HalfedgeDS> surfaceBuilder(self, vertexArray, elementArray, refDic2);
+    _polyhedron.delegate(surfaceBuilder);
     
-    _dirty = NO;
+    _dirty_polyhedron = NO;
 
-    BOOL closed1 = _surface.is_closed();
-    BOOL valid1 = _surface.is_valid() ;
+    BOOL closed1 = _polyhedron.is_closed();
+    BOOL valid1 = _polyhedron.is_valid() ;
 //    if (!(closed1 && valid1))
-        NSLog(@"_surface is %@ and %@", closed1 ? @"closed" : @"open", valid1 ? @"valid" : @"not valid");
+        NSLog(@"_polyhedron is %@ and %@", closed1 ? @"closed" : @"open", valid1 ? @"valid" : @"not valid");
 }
 
 
 -(void) generate
 {
-    // generateSurface can set only _surface, but also _geometry, in which case we don't need to run generateGeometry
-    [self generateGeometry]; // calls [self generateSurface];
-    // [self generateSurface];
-    Nef_polyhedron N1(_surface);
-    _nef_surface = N1;
-    _dirty = NO;
+    // generatePolyhedron can set only _polyhedron, but also _geometry, in which case we don't need to run generateGeometry
+    [self generateGeometry]; // calls [self generatePolyhedron];
+    // [self generatePolyhedron];
+    _nef_polyhedron.clear();
+    Nef_polyhedron N1(_polyhedron);
+    _nef_polyhedron = N1;
+    _dirty_polyhedron = NO;
 }
 
 // this function is to be overridden
--(void) generateSurface
+-(void) generatePolyhedron
 {
-//    _surface = gts_surface_new(gts_surface_class(), gts_face_class(), gts_edge_class(), gts_vertex_class());
+//    _polyhedron = gts_polyhedron_new(gts_polyhedron_class(), gts_face_class(), gts_edge_class(), gts_vertex_class());
 
     // sphere through isofunction
     //    GtsCartesianGrid g;
     //    g.nx = g.ny = g.nz = 21;
     //    g.x  = g.y  = g.z  = -0.5;
     //    g.dx = g.dy = g.dz = 0.05;
-    //    gts_isosurface_cartesian(_surface, g, (GtsIsoCartesianFunc) sphereFunc, &g, 0.0);
+    //    gts_isosurface_cartesian(_polyhedron, g, (GtsIsoCartesianFunc) sphereFunc, &g, 0.0);
     
     // sphere through ... sphere!
 
-//    gts_surface_generate_sphere(_surface, 3);
-//    BOOL closed1 = gts_surface_is_closed(_surface);
-//    BOOL orientable1 = gts_surface_is_orientable(_surface);
+//    gts_polyhedron_generate_sphere(_polyhedron, 3);
+//    BOOL closed1 = gts_polyhedron_is_closed(_polyhedron);
+//    BOOL orientable1 = gts_polyhedron_is_orientable(_polyhedron);
 //    if (!(closed1 && orientable1))
-//        NSLog(@"_surface is %@ and %@", closed1 ? @"closed" : @"open", orientable1 ? @"orientable" : @"not orientable");
+//        NSLog(@"_polyhedron is %@ and %@", closed1 ? @"closed" : @"open", orientable1 ? @"orientable" : @"not orientable");
 }
 
 -(void) generateGeometry
 {
-//    if (_surface == nil)
-        [self generateSurface];
+//    if (_polyhedron == nil)
+        [self generatePolyhedron];
 //    GtsSurfaceStats stats;
-//    gts_surface_stats (_surface, &stats);
+//    gts_polyhedron_stats (_polyhedron, &stats);
 //    uint nvertices = 3 * stats.n_faces; // this is for face_write_dup which is not yet working
 //    GHashTable *vindex;
     
@@ -524,7 +522,7 @@ public:
 //    data[7] = &m;
     
     n = m = 0;
-//    gts_surface_foreach_face (_surface, (GtsFunc) write_face, data);
+//    gts_polyhedron_foreach_face (_polyhedron, (GtsFunc) write_face, data);
 
 //    SCNGeometrySource *verticeSource = [SCNGeometrySource geometrySourceWithVertices:[verticeData mutableBytes] count:nvertices];
 //    SCNGeometrySource *normalSource  = [SCNGeometrySource geometrySourceWithNormals: [normalData mutableBytes] count:nvertices];
@@ -552,20 +550,21 @@ public:
 //    data[0] = fp;
 //    data[1] = &n;
 //    fprintf (data[0], "solid test\n");
-//    gts_surface_foreach_face (_surface, (GtsFunc) stl_write_face, data);
+//    gts_polyhedron_foreach_face (_polyhedron, (GtsFunc) stl_write_face, data);
 //    fprintf (data[0], "endsolid test\n");
 //    fclose(fp);
 }
 
 
 -(void) setDelta:(double)delta {
-    _dirty = YES;
+    _dirty_polyhedron = YES;
     _delta = delta;
 };
 
 -(void)dealloc
 {
-    _surface.clear();
+    _polyhedron.clear();
+    _nef_polyhedron.clear();
 }
 
 

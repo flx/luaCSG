@@ -51,7 +51,6 @@
 {
     self = [super init];
     if (self) {
-        _dirty    = NO;
         _height   = height;
         _length   = length;
         _width    = width;

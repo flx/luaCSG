@@ -51,7 +51,6 @@
 {
     self = [super init];
     if (self) {
-        _dirty    = NO;
         _innerRadius = innerRadius;
         _outerRadius = outerRadius;
         _height   = height;

@@ -51,7 +51,6 @@ CGFloat fabs(CGFloat f) {return f < 0.0 ? -f : f;}
 {
     self = [super init];
     if (self) {
-        _dirty    = NO;
         _capRadius = capRadius;
         _height = height;
         [super setGeometry:self.generatedGeometry]; // triggers the generation of all the stuff ...
