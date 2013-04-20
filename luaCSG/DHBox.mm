@@ -42,7 +42,7 @@
 -(BOOL) generateGeometry
 {
     SCNGeometry *geom = [SCNBox boxWithWidth:_width height:_height length:_length chamferRadius:0.0];
-    [self setGeometry:geom];
+    self.geometry = geom;
     return YES;
 }
 

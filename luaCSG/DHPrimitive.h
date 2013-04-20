@@ -23,6 +23,8 @@
 #import <Foundation/Foundation.h>
 #import <SceneKit/SceneKit.h>
 
+#include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/IO/Polyhedron_VRML_1_ostream.h>
 #include <CGAL/Gmpq.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
@@ -67,7 +69,6 @@ enum {
 -(void) geometryFromPolyhedron;
 -(void) safeToSTLFileAtPath:(NSString*) path;
 
--(void) applyLocalTransform;
 -(void) applyWorldTransform;
 -(void) applyTransform: (CATransform3D) t;
 -(void) applyBooleanOperationsInScene:(SCNScene *)scene;
