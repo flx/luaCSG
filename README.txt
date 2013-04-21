@@ -17,3 +17,7 @@ Unfortunately gts has bugs and can be unstable with boolean operations - so ther
 significant fixes needed in luaCGS / gts to make it remotely usable.
 
 I am currently deliberating abandoning gts and switching to CGAL (http://www.cgal.org).
+
+UPDATE: I have now switched the code to CGAL and it seems to work - at least without the
+crashes caused by gts. It has become considerably slower as a result, which is partially
+caused by CGAL being slower, but also by a lot of code inefficiencies remaining.
