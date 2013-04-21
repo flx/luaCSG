@@ -163,7 +163,7 @@ static int do_union(lua_State *L) {
         [p1 addChildNode:p2];
         p2.type = DHUnion;
         [p1 applyBooleanOperationsInScene:doc.scene];
-        [p1 safeToSTLFileAtPath:@"/Users/felix/Desktop/union.stl"];
+//        [p1 safeToSTLFileAtPath:@"/Users/felix/Desktop/union.stl"];
     } else NSLog(@"no pointers!");
     
     return 0;  /* number of results */
