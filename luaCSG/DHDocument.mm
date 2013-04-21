@@ -298,7 +298,6 @@ static int create_cylinder(lua_State *L) {
     self = [super init];
     if (self) {
         // Add your subclass-specific initialization here.
-        self.primitives = [NSMutableArray array];
     }
     return self;
 }
@@ -352,6 +351,7 @@ static int create_cylinder(lua_State *L) {
     ambientLightNode.rotation = SCNVector4Make(1.0, 0.3, 0.0, -30.0/180.0*3.1415);
     [root addChildNode:ambientLightNode];
     _scene = sceneView.scene;
+    self.primitives = [NSMutableArray array];
 }
 
 - (void)awakeFromNib {
