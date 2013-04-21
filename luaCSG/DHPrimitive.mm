@@ -67,11 +67,9 @@ public:
         typedef typename HDS::Vertex   Vertex;
         typedef typename Vertex::Point Point;
         B.begin_surface( [vArray count], [eArray count], 0);
-//        int i = 0;
         for (NSNumber *n in vArray) {
             SCNVector3 vertex = [p getVector:[n intValue]];
             B.add_vertex( Point( vertex.x, vertex.y, vertex.z));
-//            NSLog(@"add vertex %d: %+.10le %+.10le %+.10le",i++, vertex.x, vertex.y, vertex.z);
         }
         
         for (NSData *eData in eArray) {
@@ -80,10 +78,6 @@ public:
             B.add_vertex_to_facet([((NSNumber*)[refDic objectForKey:[NSNumber numberWithInt: triangle->v1]]) intValue]);
             B.add_vertex_to_facet([((NSNumber*)[refDic objectForKey:[NSNumber numberWithInt: triangle->v2]]) intValue]);
             B.add_vertex_to_facet([((NSNumber*)[refDic objectForKey:[NSNumber numberWithInt: triangle->v3]]) intValue]);
-//            NSLog(@"add facet %d %d %d",
-//                  [((NSNumber*)[refDic objectForKey:[NSNumber numberWithInt: triangle->v1]]) intValue],
-//                  [((NSNumber*)[refDic objectForKey:[NSNumber numberWithInt: triangle->v2]]) intValue],
-//                  [((NSNumber*)[refDic objectForKey:[NSNumber numberWithInt: triangle->v3]]) intValue]);
             B.end_facet();
         }
         B.end_surface();
@@ -93,14 +87,10 @@ public:
 
 @implementation DHPrimitive
 
-// @synthesize generatedGeometry = _generatedGeometry;
-
 - (void)addChildNode:(SCNNode *) child
 {
-    NSLog(@"addChildNode");
+    // all nodes are originally in the global coordinate system - now the transforms need to be made relative
     [child setTransform:CATransform3DConcat(child.transform,CATransform3DInvert(self.transform))];
-    NSLog(@"child transform");
-    printTransform(child.transform);
     [super addChildNode:child];
 }
 
@@ -111,6 +101,8 @@ public:
         _dirty_polyhedron     = YES;
         _dirty_nef_polyhedron = YES;
         _dirty_transform      = YES;
+        
+        _lastTransform = CATransform3DIdentity;
         
         self.type = DHOpNotSet;
         
@@ -148,108 +140,40 @@ public:
     return self;
 }
 
--(void) setTransform:(CATransform3D)transform
-{
-    [super setTransform:transform];
-    if (!CATransform3DEqualToTransform(transform,CATransform3DIdentity)) {
-        NSLog(@"+ setTransform");
-        printTransform(transform);
-        for (DHPrimitive *p in self.childNodes) [p applyWorldTransform];
-        [self applyWorldTransform];
-        [self geometryFromPolyhedron];
-        NSLog(@"- setTransform");
-    }       
-}
-
--(void) applyWorldTransform
-{
-    NSLog(@"+ applyWorldTransform");
-    [self applyTransform:self.worldTransform];
-    self.transform = CATransform3DIdentity;
-    _dirty_transform = NO;
-    NSLog(@"- applyWorldTransform");
-}
-
 -(void) applyTransform: (CATransform3D) t
 {
-    NSLog(@"+ applyTransform");
-    
-    // Not sure I got the indices right ... file:///Users/felix/Programming/CGAL%20html/cgal_manual/Kernel_23_ref/Class_Aff_transformation_3.html#Cross_link_anchor_348
     AffTransform A(t.m11, t.m21, t.m31, t.m41,
                    t.m12, t.m22, t.m32, t.m42,
                    t.m13, t.m23, t.m33, t.m43,
                                         t.m44);
-    
-    // print before transform
-    // std::cout << _polyhedron;
-    
     _nef_polyhedron.transform(A);
-    
-//    if(_nef_polyhedron.is_simple()) {
-//        NSLog(@"convert nef_polyhedron back to polyhedron");
-//        _polyhedron.clear();
-//        _nef_polyhedron.convert_to_polyhedron(_polyhedron);
-//        //                    [self geometryFromPolyhedron];
-//    } else
-//        NSLog(@"****************** _polyhedron is not a 2-manifold.");
-
-    // print after transform
-    // std::cout << _polyhedron;
-    
-//    [self geometryFromPolyhedron];
-    NSLog(@"- applyTransform");
 }
 
 -(void) applyBooleanOperationsInScene:(SCNScene *)scene
 {
-    NSLog(@"+ applyBooleanOperationsInScene");
-//    NSLog(@"before:");
-//    BOOL closed1 = _polyhedron.is_closed();
-//    BOOL valid1 = _polyhedron.is_valid() ;
-//    if (!(closed1 && valid1))
-//        NSLog(@"_polyhedron is %@ and %@", closed1 ? @"closed" : @"open", valid1 ? @"valid" : @"not valid");
-    
-//    if (_dirty_transform) [self applyWorldTransform];
-    
+//    NSLog(@"+ applyBooleanOperationsInScene");
+    [self applyTransform:self.worldTransform];
     if (self.childNodes.count > 0) { // are there any?
-        if (!CATransform3DEqualToTransform(CATransform3DIdentity, self.worldTransform)) {
-            NSLog(@"WorldTransform is not identity, but should be.");
-            printTransform(self.worldTransform);
-        }
-        
         for (DHPrimitive *p in self.childNodes) {
-            // [p applyLocalTransform]; // this should not be necessary any more
-            [p applyBooleanOperationsInScene:scene]; // apply boolean operations on child nodes, if necessary
-            
+            [p applyBooleanOperationsInScene:scene]; // apply boolean operations on child nodes before
             Nef_polyhedron n1 = [self nef_polyhedron];
             Nef_polyhedron n2 = [p nef_polyhedron];
-            
             if      (DHUnion        == [p type]) n1 += n2;
             else if (DHDifference   == [p type]) n1 -= n2;
             else if (DHIntersection == [p type]) n1 *= n2;
             else NSLog(@"No boolean operation performed. -> %i", [p type]);
-            
             _nef_polyhedron.clear();
             _nef_polyhedron = n1;
-            
         }
-        
         for (DHPrimitive *p in self.childNodes) {
             [p removeFromParentNode];
-            // keep child nodes around - transparently
-//            [scene.rootNode addChildNode:p];
-//            p.geometry.firstMaterial.transparency = 0.9;
-//            p.geometry.firstMaterial.transparencyMode = SCNTransparencyModeRGBZero;
+            // keep child nodes around - transparently // This doesnt work any more as we dont reconvert everything all the time.
+            // [scene.rootNode addChildNode:p];
+            // p.geometry.firstMaterial.transparency = 0.9;
+            // p.geometry.firstMaterial.transparencyMode = SCNTransparencyModeRGBZero;
         }
-                
-        [self geometryFromPolyhedron];
     }
-//    NSLog(@"after:");
-//    closed1 = _polyhedron.is_closed();
-//    valid1 = _polyhedron.is_valid() ;
-//    if (!(closed1 && valid1))
-//        NSLog(@"_polyhedron is %@ and %@", closed1 ? @"closed" : @"open", valid1 ? @"valid" : @"not valid");
-    NSLog(@"- applyBooleanOperationsInScene");
+//    NSLog(@"- applyBooleanOperationsInScene");
 }
 
 
@@ -263,8 +187,7 @@ public:
 -(Nef_polyhedron) nef_polyhedron
 {
     if (!_dirty_nef_polyhedron) return _nef_polyhedron;
-    
-    // Only create the nef polyhedron if there is any need
+    // Only create the nef polyhedron if there is any need -- this code should never be run
     _nef_polyhedron.clear();
     Nef_polyhedron N1(_polyhedron);
     _nef_polyhedron = N1;
@@ -276,7 +199,7 @@ public:
 // this to override the geometry produced by SceneKit primitives ...
 -(SCNVector3) transformVector:(SCNVector3) vector
 {
-    // generically this should not transform - so just return the vector untransformed
+    // generically this should not do anything - so just return the vector as is
     return vector;
 }
 
@@ -337,23 +260,12 @@ public:
     return element;
 }
 
-//// setting it with a SCNGeometry object - note that this only works half with SCNKit primitives, because they don't seem to contain the real geometry data?
-//-(void) setGeometry:(SCNGeometry *)geometry
-//{
-//    [geometry setFirstMaterial: [self generatedMaterial]];
-//    [super setGeometry: geometry];
-//    _dirty_polyhedron = YES;
-//    _dirty_nef_polyhedron = YES;
-////    [self polyhedronFromGeometry];
-////    [self geometryFromPolyhedron];
-//}
-
-
 -(void) generate
 {
-    // try to get a new geometry first - if that fails, try to generate the polyhedron and then the geometry
+    // subclasses can override generateGeometry or generatePolyhedron - and return YES for the overridden method that now returns NO all the time
+    
     if (![self generateGeometry]) {
-        // geometry has not been generated
+        // geometry has not been generated so try to generate the polyhedron
         if ([self generatePolyhedron])
             // polyhedron has been generated - now derive geometry from polyhedron
             [self geometryFromPolyhedron];
@@ -362,14 +274,13 @@ public:
     } else {
         // geometry has been generated - now derive polyhedron from it
         [self polyhedronFromGeometry];
-        [self geometryFromPolyhedron]; // roundtrip for debugging
     }
 }
 
 // this function is to be overridden
 -(BOOL) generatePolyhedron
 {
-    return NO; // indicate that no geometry has been generated
+    return NO; // indicate that no polyhedron has been generated
 }
 
 // this function is to be overridden
@@ -439,7 +350,7 @@ public:
 
 -(void) geometryFromPolyhedron
 {
-    NSLog(@"+geometryFromPolyhedron");
+//    NSLog(@"+geometryFromPolyhedron");
 
     if(_nef_polyhedron.is_simple()) {
         NSLog(@"convert nef_polyhedron back to polyhedron");
@@ -522,7 +433,7 @@ public:
     [geom setFirstMaterial: [self generatedMaterial]];
     _dirty_polyhedron = NO;
     self.geometry = geom; 
-    NSLog(@"-geometryFromPolyhedron");
+//    NSLog(@"-geometryFromPolyhedron");
 }
 
 -(void) safeToSTLFileAtPath:(NSString*) path

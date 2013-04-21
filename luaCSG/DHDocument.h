@@ -35,5 +35,6 @@
 -(IBAction)run:(id)sender;
 
 @property (readonly) SCNScene *scene;
+@property (readwrite, nonatomic) NSMutableArray *primitives;
 
 @end

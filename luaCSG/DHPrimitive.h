@@ -57,6 +57,7 @@ enum {
     BOOL           _dirty_transform;
     Polyhedron     _polyhedron;
     Nef_polyhedron _nef_polyhedron;
+    CATransform3D  _lastTransform;
 }
 
 // accessors for polyhedra - never to be written to
@@ -69,7 +70,6 @@ enum {
 -(void) geometryFromPolyhedron;
 -(void) safeToSTLFileAtPath:(NSString*) path;
 
--(void) applyWorldTransform;
 -(void) applyTransform: (CATransform3D) t;
 -(void) applyBooleanOperationsInScene:(SCNScene *)scene;
 

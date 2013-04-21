@@ -119,9 +119,10 @@ static int difference(lua_State *L) {
     
     
     if (doc && p1 && p2) {
+        [doc.primitives removeObject:p2];
         [p1 addChildNode:p2];
         p2.type = DHDifference;
-        [p1 applyBooleanOperationsInScene:doc.scene];
+//        [p1 applyBooleanOperationsInScene:doc.scene];
     } else NSLog(@"no pointers!");
     
     return 0;  /* number of results */
@@ -139,9 +140,10 @@ static int intersection(lua_State *L) {
     
     
     if (doc && p1 && p2) {
+        [doc.primitives removeObject:p2];
         [p1 addChildNode:p2];
         p2.type = DHIntersection;
-        [p1 applyBooleanOperationsInScene:doc.scene];
+//        [p1 applyBooleanOperationsInScene:doc.scene];
     } else NSLog(@"no pointers!");
     
     return 0;  /* number of results */
@@ -160,9 +162,10 @@ static int do_union(lua_State *L) {
     
     
     if (doc && p1 && p2) {
+        [doc.primitives removeObject:p2];
         [p1 addChildNode:p2];
         p2.type = DHUnion;
-        [p1 applyBooleanOperationsInScene:doc.scene];
+//        [p1 applyBooleanOperationsInScene:doc.scene];
 //        [p1 safeToSTLFileAtPath:@"/Users/felix/Desktop/union.stl"];
     } else NSLog(@"no pointers!");
     
@@ -295,6 +298,7 @@ static int create_cylinder(lua_State *L) {
     self = [super init];
     if (self) {
         // Add your subclass-specific initialization here.
+        self.primitives = [NSMutableArray array];
     }
     return self;
 }
@@ -315,6 +319,7 @@ static int create_cylinder(lua_State *L) {
 -(void) addPrimitive:(DHPrimitive*) p
 {
     [sceneView.scene.rootNode addChildNode:p];
+    [self.primitives addObject:p];
 }
 
 -(void) initScene
@@ -435,39 +440,16 @@ static int create_cylinder(lua_State *L) {
             fprintf(stderr, "%s", lua_tostring(L, -1));
             lua_pop(L, 1);  /* pop error message from the stack */
         }
-        lua_close(L);    }
+        lua_close(L);
+    }
+    NSLog(@"apply boolean operations:");
+    int i=0;
+    for (DHPrimitive* p in self.primitives) {
+        NSLog(@"Doing primitive %d of %ld", i+1, (unsigned long) self.primitives.count);
+        [p applyBooleanOperationsInScene:self.scene];
+        [p geometryFromPolyhedron];
+    }
 }
 
 
 @end
-
-//
-//    void(^create)(DHPrimitive *p1, DHPrimitive *p2, short op, SCNVector3 t, NSString *name) = ^(DHPrimitive *p1, DHPrimitive *p2, short op, SCNVector3 t, NSString *name) {
-//        p1.position = t;
-//        p2.position = SCNVector3Make(t.x + 0.5, t.y + 0.1, t.z + 1.0);
-//        p1.type = op;
-////        [p1 generateGeometry];
-////        [p2 generateGeometry];
-//        [p1 addChildNode:p2];
-//        [p1 applyBooleanOperations];
-//        [root addChildNode:p1];
-//        [p1 safeToSTLFileAtPath:[NSString stringWithFormat:@"/Users/felix/Desktop/%@.stl", name]];
-//    };
-//
-//    create([DHBox boxWithWidth:1.0 height:2.0 length:3.0],              [DHBox boxWithWidth:1.0 height:2.0 length:3.0],              DHUnion, SCNVector3Make( 0.0, 0.0, 0.0), @"DHUnion-boxes");
-//    create([DHCylinder cylinderWithRadius:1.5 height:2.0],              [DHCylinder cylinderWithRadius:2.0 height:3.0],              DHUnion, SCNVector3Make( 5.0, 0.0, 0.0), @"DHUnion-cylinder");
-//    create([DHCone coneWithBottomRadius:2.0 height:3.0],                [DHCone coneWithBottomRadius:2.5 height:2.0],                DHUnion, SCNVector3Make(10.0, 0.0, 0.0), @"DHUnion-cone");
-//    create([DHTube tubeWithInnerRadius:2.0 outerRadius:2.1 height:2.0], [DHTube tubeWithInnerRadius:1.5 outerRadius:2.0 height:2.1], DHUnion, SCNVector3Make(15.0, 0.0, 0.0), @"DHUnion-Tube");
-//    create([DHSphere sphereWithRadius:2.0],                             [DHSphere sphereWithRadius:2.4],                             DHUnion, SCNVector3Make(20.0, 0.0, 0.0), @"DHUnion-sphere");
-//
-//    create([DHBox boxWithWidth:1.0 height:2.0 length:3.0],              [DHBox boxWithWidth:1.0 height:2.0 length:3.0],              DHDifference, SCNVector3Make( 0.0,5.0, 0.0), @"DHDiff-boxes");
-//    create([DHCylinder cylinderWithRadius:1.5 height:2.0],              [DHCylinder cylinderWithRadius:2.0 height:3.0],              DHDifference, SCNVector3Make( 5.0,5.0, 0.0), @"DHDiff-cylinder");
-//    create([DHCone coneWithBottomRadius:2.0 height:3.0],                [DHCone coneWithBottomRadius:2.5 height:2.0],                DHDifference, SCNVector3Make(10.0,5.0, 0.0), @"DHDiff-cone");
-//    create([DHTube tubeWithInnerRadius:2.0 outerRadius:2.1 height:2.0], [DHTube tubeWithInnerRadius:1.5 outerRadius:2.0 height:2.1], DHDifference, SCNVector3Make(15.0,5.0, 0.0), @"DHDiff-Tube");
-//    create([DHSphere sphereWithRadius:2.0],                             [DHSphere sphereWithRadius:2.4],                             DHDifference, SCNVector3Make(20.0,5.0, 0.0), @"DHDiff-sphere");
-//
-//    create([DHBox boxWithWidth:1.0 height:2.0 length:3.0],              [DHBox boxWithWidth:1.0 height:2.0 length:3.0],              DHIntersection, SCNVector3Make( 0.0,10.0, 0.0), @"DHInters-boxes");
-//    create([DHCylinder cylinderWithRadius:1.5 height:2.0],              [DHCylinder cylinderWithRadius:2.0 height:3.0],              DHIntersection, SCNVector3Make( 5.0,10.0, 0.0), @"DHInters-cylinder");
-//    create([DHCone coneWithBottomRadius:2.0 height:3.0],                [DHCone coneWithBottomRadius:2.5 height:2.0],                DHIntersection, SCNVector3Make(10.0,10.0, 0.0), @"DHInters-cone");
-//    create([DHTube tubeWithInnerRadius:2.0 outerRadius:2.1 height:2.0], [DHTube tubeWithInnerRadius:1.5 outerRadius:2.0 height:2.1], DHIntersection, SCNVector3Make(15.0,10.0, 0.0), @"DHInters-Tube");
-//    create([DHSphere sphereWithRadius:2.0],                             [DHSphere sphereWithRadius:2.4],                             DHIntersection, SCNVector3Make(20.0,10.0, 0.0), @"DHInters-sphere");
